@@ -1,0 +1,312 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<!-- #BeginTemplate "../home.dwt" -->
+
+<head>
+<link rel="stylesheet" href="../include/root.css" type="text/css" />
+<script type="text/javascript" src="../include/root.js"></script>
+<!-- #BeginEditable "doctitle" -->
+<title>Euler's Theorem</title>
+<style type="text/css">
+table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td {
+    text-align: center;
+}
+</style>
+<script type="text/javascript"><!--
+function testLaws(law)
+{
+var i, flag = 1;
+lawglob = law.replace(/=/, '==');
+
+for (i=0; i<nn; i++)
+    flag &= testLaw(i, law);
+    if (flag) alert("Wow! You guess the Euler theorem!");
+}
+
+function testLaw(i, law)
+{
+    with (document.forms[0]["c" + i]) {
+        click();
+        return checked
+    }
+}
+
+function testValue(a, b)
+{
+  var tmpb = parseInt(a);
+  if (tmpb) {
+    if (tmpb > b) { return '<' + tmpb; }
+    else if (tmpb < b) { return '>' + tmpb; }
+    else return tmpb;
+  }
+  else return '';
+}
+
+function testClick(c, v, e, f)
+{
+    V=v; E=e; F=f;
+    c.checked = !(eval(lawglob) ^ (v-e+f==2));
+}
+
+var nn = 8, lawglob;
+// -->
+</script>
+<!-- #EndEditable -->
+<meta http-equiv="content-type" content="text/html; charset=Windows-1251" />
+<meta name="author" content="alexei.fedotov.at.gmail.com" />
+<meta name="document-state" content="static" />
+</head>
+
+<body class="float-text">
+<p class="right-ref">[<a name="top" href="../index.html">home</a>]</p>
+
+<!-- #BeginEditable "body" -->
+<h2>Euler's Theorem</h2>
+
+<p>Mathematicians always try to make their language
+more effective. They usually call a lot of different things by one
+word.</p>
+
+<p>Look at three items on the picture below. You
+may imagine the left of them as heavy iron balls connected by
+cords. The middle one looks like channels welded together. And may
+be the right item is a box made of paper, wood, or plastic. All the
+three have the same name for Mathematicians. They call each one
+<i>A Cube</i>.</p>
+
+<table>
+<tr>
+<td colspan="3"><img src="euler/cubes.gif" alt="cube models" />
+</td>
+</tr>
+
+<tr>
+<td style="width: 140px">8 vertices</td>
+<td style="width: 140px">12 edges</td>
+<td style="width: 140px">6 faces</td>
+</tr>
+</table>
+
+<p>Each of the Cubes has 8 vertices, 12 edges and 6
+faces. It means that you may construct the model of the Cube
+connecting 8 balls with cords, or welding 12 channels, or
+assembling 6 square sheets of paper side by side.</p>
+
+<p>The Cube is the simplest <i>Polyhedron</i>. You
+can imagine an arbitrary polyhedron as a solid with plane faces.
+For example, a sculptor, who makes his work chopping off the stone,
+actually makes a beautiful polyhedron. What is a mathematical definition
+for beauty? This question was very important for the classical Greece
+mathematics, which tried to build a perfect and flawless picture
+of our world.</p>
+
+<p>The Classics searched for beauty everywhere. They
+searched the beauty for their bodies in Olimpiads, they searched the
+beauty of their speech in the Senate, they searched the beauty of
+the nature in their philosophy. Mathematics was not an exception.
+The Creator of the Geometry, the famous Euclid, completes his last
+work with the list of the most invariant, or symmetric,
+polyhedra.</p>
+
+<p>Here they are: a tetrahedron, a cube
+(hexahedron), an octahedron, an icosahedron, a dodecahedron. Each
+of them has equal faces, edges, and angles. You can see these
+polyhedra in the pictures below.</p>
+
+<!--============-->
+<p>Try to count vertices (V), edges (E) and faces
+(F) of the following polyhedra. Fill the table with values.</p>
+
+<form onsubmit="testLaws(this.law.value); return false" action="">
+<table width="592">
+<tr>
+<td><b>Name</b></td>
+<td><b>Appearance</b></td>
+<td><b>V</b></td>
+<td><b>E</b></td>
+<td><b>F</b></td>
+<td><b>Test</b></td>
+</tr>
+
+<tr>
+<td>Hexahedron</td>
+<td><img src="euler/cube.gif" alt="cube" />
+</td>
+<td>8</td>
+<td>12</td>
+<td>6</td>
+<td><input type="checkbox" name="c0"
+onclick=
+"testClick(this, 4, 12, 6); return true;" />
+</td>
+</tr>
+
+<tr>
+<td>Tetrahedron</td>
+<td><img src="euler/Tetrahedron.gif" alt="tetrahedron" />
+</td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 4)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 6)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 4)" onfocus=
+"this.select()" /></td>
+<td><input type="checkbox" name="c1"
+onclick=
+"testClick(this, 4, 6, 4); return true;" />
+</td>
+</tr>
+
+<tr>
+<td>Octahedron</td>
+<td><img src="euler/Octahedron.gif" alt="octahedron" />
+</td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 6)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 12)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 8)" onfocus=
+"this.select()" /></td>
+<td><input type="checkbox" name="c2"
+onclick=
+"testClick(this, 6, 12, 8); return true;" />
+</td>
+</tr>
+
+<tr>
+<td>Icosahedron</td>
+<td><img src="euler/Icosahedron.gif" alt="icosahedron" />
+</td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 12)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 30)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 20)" onfocus=
+"this.select()" /></td>
+<td><input type="checkbox" name="c3"
+onclick=
+"testClick(this, 12, 30, 20); return true;" />
+</td>
+</tr>
+
+<tr>
+<td>Dodecahedron</td>
+<td><img src="euler/Dodecahedron.gif" alt="dodecahedron" />
+</td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 20)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 30)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 12)" onfocus=
+"this.select()" /></td>
+<td><input type="checkbox" name="c4"
+onclick=
+"testClick(this, 20, 30, 12); return true;" />
+</td>
+</tr>
+
+<tr>
+<td>Truncated Tetrahedron</td>
+<td><img src="euler/TruncatedTetrahedron.gif" alt="truncated tetrahedron" />
+</td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 12)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 18)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 8)" onfocus=
+"this.select()" /></td>
+<td><input type="checkbox" name="c5"
+onclick=
+"testClick(this, 12, 18, 8); return true;" />
+</td>
+</tr>
+
+<tr>
+<td>Truncated Octahedron</td>
+<td><img src="euler/TruncatedOctahedron.gif" alt="truncated octahedron" />
+</td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 24)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 36)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 14)" onfocus=
+"this.select()" /></td>
+<td><input type="checkbox" name="c6"
+onclick=
+"testClick(this, 24, 36, 14); return true;" />
+</td>
+</tr>
+
+<tr>
+<td style="color: gray">Great Stellated
+Dodecahedron</td>
+<td><img src="euler/GreatStellatedDodecahedron.gif" alt="great stellated dodecahedron" />
+</td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 20)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 30)" onfocus=
+"this.select()" /></td>
+<td><input size="3" onblur=
+"this.value = testValue(this.value, 60)" onfocus=
+"this.select()" /></td>
+<td><input type="checkbox" name="c7"
+onclick=
+"testClick(this, 20, 30, 60); return true;" />
+</td>
+</tr>
+</table>
+
+<!--============-->
+
+<p>Leonhard Euler (1707-83) had invented a
+dependence between E, V, and F. This identity is valid for all the polyhedra
+except the last one. Try to find the Euler theorem yourself.
+Enter a relation between E, V and F here: <input name="law" />. Press <input value="check" type="submit" /> to check it
+for all the polyhedra in the list.</p>
+</form>
+
+<!--<p>
+<a href="http://validator.w3.org/check?uri=referer"><img
+    src="http://www.w3.org/Icons/valid-xhtml10"
+    alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a>
+</p>-->
+
+
+<!-- #EndEditable -->
+
+<p>&nbsp;</p>
+
+<p class="right-ref">[<a href="#top">top</a>] [<a name="top" href="../index.html">home</a>]</p>
+</body>
+
+<!-- #EndTemplate -->
+
+</html>

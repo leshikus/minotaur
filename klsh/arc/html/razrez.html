@@ -1,0 +1,384 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.2//RU">
+<html>
+
+<!-- #BeginTemplate "legend.dwt" -->
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
+<link rel="stylesheet" href="../../klsh.css">
+<!-- #BeginEditable "doctitle" -->
+<title>Разрезание фигур на две части</title>
+<!-- #EndEditable -->
+</head>
+
+<body class="info">
+
+<p align="right"><a name="top" href="../../archive.html">в архив</a>,
+<a href="../../1998.html">в жизнь</a></p>
+<!-- #BeginEditable "content" -->
+<h1>Разрезание фигур на клетчатой бумаге на две равные части</h1>
+<h2>Постановка задачи</h2>
+<p>Дана фигура из квадратиков на клетчатой бумаге. Требуется разрезать её
+на две части, совмещаемые поворотом.</p>
+
+<h2>Детали реализации</h2>
+<p>Разрезаемая фигура представляется набором нулей и единичек в
+двумерном массиве. Для каждой единицы в исходном массиве мы рассматриваем два
+варианта&nbsp;&mdash; либо она принадлежит первой части, либо второй. В первом
+случае единица заменяется на двойку, во втором&nbsp;&mdash; на тройку.</p>
+
+<p>Перебор случаев происходит следующим образом. Безусловно заменяем
+самую первую единицу на двойку. На каждом уровне
+дерева перебора мы перебираем два
+варианта для очередной единицы, касающейся некоторой двойки. Таким образом
+вторая часть всегда получается связной. Если части из двоек и троек нельзя
+совместить движением, мы обрываем перебор по данной ветви.
+</p>
+
+<h2>RAZRES.PAS</h2>
+
+<pre>
+<font color="#804040"><b>program</b></font> razres;
+<font color="#804040"><b>const</b></font>
+ mmax=<font color="#ff00ff">10</font>;
+ nmax=<font color="#ff00ff">10</font>;
+<font color="#804040"><b>type</b></font>
+ field=<font color="#2e8b57"><b>array</b></font> [<font color="#ff00ff">0</font>..nmax+<font color="#ff00ff">1</font>,<font color="#ff00ff">0</font>..mmax+<font color="#ff00ff">1</font>] <font color="#804040"><b>of</b></font> <font color="#2e8b57"><b>byte</b></font>;
+<font color="#804040"><b>var</b></font>
+ m,n:<font color="#2e8b57"><b>integer</b></font>;
+ F:field;
+<font color="#0000ff">{----------------------------}</font>
+<font color="#804040"><b>procedure</b></font> one;
+<font color="#804040"><b>var</b></font>
+ i,j:<font color="#2e8b57"><b>integer</b></font>;
+<font color="#804040"><b>begin</b></font>
+ <font color="#804040"><b>for</b></font> i:=<font color="#ff00ff">1</font> <font color="#804040"><b>to</b></font> m <font color="#804040"><b>do</b></font> <font color="#804040"><b>begin</b></font>
+  <font color="#804040"><b>for</b></font> j:=<font color="#ff00ff">1</font> <font color="#804040"><b>to</b></font> n <font color="#804040"><b>do</b></font> <font color="#804040"><b>begin</b></font>
+    <font color="#804040"><b>if</b></font> f[i,j]=<font color="#ff00ff">1</font> <font color="#804040"><b>then</b></font> <font color="#804040"><b>begin</b></font> f[i,j]:=<font color="#ff00ff">2</font>; i:=m; j:=n; <font color="#804040"><b>end</b></font>;
+  <font color="#804040"><b>end</b></font>;
+ <font color="#804040"><b>end</b></font>;
+<font color="#804040"><b>end</b></font>;
+
+<font color="#804040"><b>function</b></font> Check(<font color="#804040"><b>const</b></font> Mat:Field):<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>function</b></font> CheckFig(Fig:<font color="#2e8b57"><b>Byte</b></font>):<font color="#2e8b57"><b>Boolean</b></font>;
+
+  <font color="#804040"><b>var</b></font> i,j,MinX,MinY,MaxX,MaxY,X,Y,W,H:<font color="#2e8b57"><b>Integer</b></font>;
+  <font color="#0000ff">{ W=Width-1</font>
+<font color="#0000ff">    H=Height-1 }</font>
+    Res:<font color="#2e8b57"><b>Boolean</b></font>;
+
+  <font color="#0000ff">{===  Transformation 1  ===}</font>
+  <font color="#804040"><b>function</b></font> Proc1(x,y:<font color="#2e8b57"><b>Integer</b></font>;f:<font color="#2e8b57"><b>Byte</b></font>):<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>var</b></font> i,j:<font color="#2e8b57"><b>Integer</b></font>;Res:<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>begin</b></font>
+       <font color="#804040"><b>if</b></font> (x+W&gt;m)<font color="#804040"><b>or</b></font>(y+H&gt;n) <font color="#804040"><b>then</b></font>
+       <font color="#804040"><b>begin</b></font>
+            Proc1:=<font color="#ff00ff">false</font>;
+            <font color="#008080">Exit</font>;
+       <font color="#804040"><b>end</b></font>;
+       Proc1:=<font color="#ff00ff">true</font>;
+       j:=<font color="#ff00ff">0</font>;
+       <font color="#804040"><b>repeat</b></font>
+             i:=<font color="#ff00ff">0</font>;
+             <font color="#804040"><b>repeat</b></font>
+                   <font color="#804040"><b>if</b></font> (Mat[MinX+i,MinY+j]=f)<font color="#804040"><b>and</b></font>
+                      <font color="#804040"><b>not</b></font> (Mat[x+i,y+j] <font color="#804040"><b>in</b></font> [<font color="#ff00ff">1</font>,Fig]) <font color="#804040"><b>then</b></font> Proc1:=<font color="#ff00ff">false</font>;
+                   <font color="#008080">inc</font>(i);
+             <font color="#804040"><b>until</b></font> i&gt;W;
+             <font color="#008080">inc</font>(j);
+       <font color="#804040"><b>until</b></font> j&gt;W;
+  <font color="#804040"><b>end</b></font>;
+
+  <font color="#0000ff">{===  Transformation 2  ===}</font>
+  <font color="#804040"><b>function</b></font> Proc2(x,y:<font color="#2e8b57"><b>Integer</b></font>;f:<font color="#2e8b57"><b>Byte</b></font>):<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>var</b></font> i,j:<font color="#2e8b57"><b>Integer</b></font>;Res:<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>begin</b></font>
+       <font color="#804040"><b>if</b></font> (x-H&lt;<font color="#ff00ff">0</font>)<font color="#804040"><b>or</b></font>(y+W&gt;n) <font color="#804040"><b>then</b></font>
+       <font color="#804040"><b>begin</b></font>
+            Proc2:=<font color="#ff00ff">false</font>;
+            <font color="#008080">Exit</font>;
+       <font color="#804040"><b>end</b></font>;
+       Proc2:=<font color="#ff00ff">true</font>;
+       j:=<font color="#ff00ff">0</font>;
+       <font color="#804040"><b>repeat</b></font>
+             i:=<font color="#ff00ff">0</font>;
+             <font color="#804040"><b>repeat</b></font>
+                   <font color="#804040"><b>if</b></font> (Mat[MinX+i,MinY+j]=f)<font color="#804040"><b>and</b></font>
+                      <font color="#804040"><b>not</b></font> (Mat[x-j,y+i] <font color="#804040"><b>in</b></font> [<font color="#ff00ff">1</font>,Fig]) <font color="#804040"><b>then</b></font> Proc2:=<font color="#ff00ff">false</font>;
+                   <font color="#008080">inc</font>(i);
+             <font color="#804040"><b>until</b></font> i&gt;W;
+             <font color="#008080">inc</font>(j);
+       <font color="#804040"><b>until</b></font> j&gt;W;
+  <font color="#804040"><b>end</b></font>;
+
+  <font color="#0000ff">{===  Transformation 3  ===}</font>
+  <font color="#804040"><b>function</b></font> Proc3(x,y:<font color="#2e8b57"><b>Integer</b></font>;f:<font color="#2e8b57"><b>Byte</b></font>):<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>var</b></font> i,j:<font color="#2e8b57"><b>Integer</b></font>;Res:<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>begin</b></font>
+       <font color="#804040"><b>if</b></font> (x-W&lt;<font color="#ff00ff">0</font>)<font color="#804040"><b>or</b></font>(y-H&lt;<font color="#ff00ff">0</font>) <font color="#804040"><b>then</b></font>
+       <font color="#804040"><b>begin</b></font>
+            Proc3:=<font color="#ff00ff">false</font>;
+            <font color="#008080">Exit</font>;
+       <font color="#804040"><b>end</b></font>;
+       Proc3:=<font color="#ff00ff">true</font>;
+       j:=<font color="#ff00ff">0</font>;
+       <font color="#804040"><b>repeat</b></font>
+             i:=<font color="#ff00ff">0</font>;
+             <font color="#804040"><b>repeat</b></font>
+                   <font color="#804040"><b>if</b></font> (Mat[MinX+i,MinY+j]=f)<font color="#804040"><b>and</b></font>
+                      <font color="#804040"><b>not</b></font> (Mat[x-i,y-j] <font color="#804040"><b>in</b></font> [<font color="#ff00ff">1</font>,Fig]) <font color="#804040"><b>then</b></font> Proc3:=<font color="#ff00ff">false</font>;
+                   <font color="#008080">inc</font>(i);
+             <font color="#804040"><b>until</b></font> i&gt;W;
+             <font color="#008080">inc</font>(j);
+       <font color="#804040"><b>until</b></font> j&gt;W;
+  <font color="#804040"><b>end</b></font>;
+
+  <font color="#0000ff">{===  Transformation 4  ===}</font>
+  <font color="#804040"><b>function</b></font> Proc4(x,y:<font color="#2e8b57"><b>Integer</b></font>;f:<font color="#2e8b57"><b>Byte</b></font>):<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>var</b></font> i,j:<font color="#2e8b57"><b>Integer</b></font>;Res:<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>begin</b></font>
+       <font color="#804040"><b>if</b></font> (x+H&gt;m)<font color="#804040"><b>or</b></font>(y-W&lt;<font color="#ff00ff">0</font>) <font color="#804040"><b>then</b></font>
+       <font color="#804040"><b>begin</b></font>
+            Proc4:=<font color="#ff00ff">false</font>;
+            <font color="#008080">Exit</font>;
+       <font color="#804040"><b>end</b></font>;
+       Proc4:=<font color="#ff00ff">true</font>;
+       j:=<font color="#ff00ff">0</font>;
+       <font color="#804040"><b>repeat</b></font>
+             i:=<font color="#ff00ff">0</font>;
+             <font color="#804040"><b>repeat</b></font>
+                   <font color="#804040"><b>if</b></font> (Mat[MinX+i,MinY+j]=f)<font color="#804040"><b>and</b></font>
+                      <font color="#804040"><b>not</b></font> (Mat[x+j,y-i] <font color="#804040"><b>in</b></font> [<font color="#ff00ff">1</font>,Fig]) <font color="#804040"><b>then</b></font> Proc4:=<font color="#ff00ff">false</font>;
+                   <font color="#008080">inc</font>(i);
+             <font color="#804040"><b>until</b></font> i&gt;W;
+             <font color="#008080">inc</font>(j);
+       <font color="#804040"><b>until</b></font> j&gt;W;
+  <font color="#804040"><b>end</b></font>;
+
+
+  <font color="#0000ff">{===  Transformation 5  ===}</font>
+  <font color="#804040"><b>function</b></font> Proc5(x,y:<font color="#2e8b57"><b>Integer</b></font>;f:<font color="#2e8b57"><b>Byte</b></font>):<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>var</b></font> i,j:<font color="#2e8b57"><b>Integer</b></font>;Res:<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>begin</b></font>
+       <font color="#804040"><b>if</b></font> (x-W&lt;<font color="#ff00ff">0</font>)<font color="#804040"><b>or</b></font>(y+H&gt;n) <font color="#804040"><b>then</b></font>
+       <font color="#804040"><b>begin</b></font>
+            Proc5:=<font color="#ff00ff">false</font>;
+            <font color="#008080">Exit</font>;
+       <font color="#804040"><b>end</b></font>;
+       Proc5:=<font color="#ff00ff">true</font>;
+       j:=<font color="#ff00ff">0</font>;
+       <font color="#804040"><b>repeat</b></font>
+             i:=<font color="#ff00ff">0</font>;
+             <font color="#804040"><b>repeat</b></font>
+                   <font color="#804040"><b>if</b></font> (Mat[MinX+i,MinY+j]=f)<font color="#804040"><b>and</b></font>
+                      <font color="#804040"><b>not</b></font> (Mat[x-i,y+j] <font color="#804040"><b>in</b></font> [<font color="#ff00ff">1</font>,Fig]) <font color="#804040"><b>then</b></font> Proc5:=<font color="#ff00ff">false</font>;
+                   <font color="#008080">inc</font>(i);
+             <font color="#804040"><b>until</b></font> i&gt;W;
+             <font color="#008080">inc</font>(j);
+       <font color="#804040"><b>until</b></font> j&gt;W;
+  <font color="#804040"><b>end</b></font>;
+
+  <font color="#0000ff">{===  Transformation 6  ===}</font>
+  <font color="#804040"><b>function</b></font> Proc6(x,y:<font color="#2e8b57"><b>Integer</b></font>;f:<font color="#2e8b57"><b>Byte</b></font>):<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>var</b></font> i,j:<font color="#2e8b57"><b>Integer</b></font>;Res:<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>begin</b></font>
+       <font color="#804040"><b>if</b></font> (x-H&lt;<font color="#ff00ff">0</font>)<font color="#804040"><b>or</b></font>(y-W&lt;<font color="#ff00ff">0</font>) <font color="#804040"><b>then</b></font>
+       <font color="#804040"><b>begin</b></font>
+            Proc6:=<font color="#ff00ff">false</font>;
+            <font color="#008080">Exit</font>;
+       <font color="#804040"><b>end</b></font>;
+       Proc6:=<font color="#ff00ff">true</font>;
+       j:=<font color="#ff00ff">0</font>;
+       <font color="#804040"><b>repeat</b></font>
+             i:=<font color="#ff00ff">0</font>;
+             <font color="#804040"><b>repeat</b></font>
+                   <font color="#804040"><b>if</b></font> (Mat[MinX+i,MinY+j]=f)<font color="#804040"><b>and</b></font>
+                      <font color="#804040"><b>not</b></font>(Mat[x-j,y-i] <font color="#804040"><b>in</b></font> [<font color="#ff00ff">1</font>,Fig]) <font color="#804040"><b>then</b></font> Proc6:=<font color="#ff00ff">false</font>;
+                   <font color="#008080">inc</font>(i);
+             <font color="#804040"><b>until</b></font> i&gt;W;
+             <font color="#008080">inc</font>(j);
+       <font color="#804040"><b>until</b></font> j&gt;W;
+  <font color="#804040"><b>end</b></font>;
+
+  <font color="#0000ff">{===  Transformation 7  ===}</font>
+  <font color="#804040"><b>function</b></font> Proc7(x,y:<font color="#2e8b57"><b>Integer</b></font>;f:<font color="#2e8b57"><b>Byte</b></font>):<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>var</b></font> i,j:<font color="#2e8b57"><b>Integer</b></font>;Res:<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>begin</b></font>
+       <font color="#804040"><b>if</b></font> (x+W&gt;m)<font color="#804040"><b>or</b></font>(y-H&lt;<font color="#ff00ff">0</font>) <font color="#804040"><b>then</b></font>
+       <font color="#804040"><b>begin</b></font>
+            Proc7:=<font color="#ff00ff">false</font>;
+            <font color="#008080">Exit</font>;
+       <font color="#804040"><b>end</b></font>;
+       Proc7:=<font color="#ff00ff">true</font>;
+       j:=<font color="#ff00ff">0</font>;
+       <font color="#804040"><b>repeat</b></font>
+             i:=<font color="#ff00ff">0</font>;
+             <font color="#804040"><b>repeat</b></font>
+                   <font color="#804040"><b>if</b></font> (Mat[MinX+i,MinY+j]=f)<font color="#804040"><b>and</b></font>
+                      <font color="#804040"><b>not</b></font> (Mat[x+i,y-j] <font color="#804040"><b>in</b></font> [<font color="#ff00ff">1</font>,Fig]) <font color="#804040"><b>then</b></font> Proc7:=<font color="#ff00ff">false</font>;
+                   <font color="#008080">inc</font>(i);
+             <font color="#804040"><b>until</b></font> i&gt;W;
+             <font color="#008080">inc</font>(j);
+       <font color="#804040"><b>until</b></font> j&gt;W;
+  <font color="#804040"><b>end</b></font>;
+
+  <font color="#0000ff">{===  Transformation 8  ===}</font>
+  <font color="#804040"><b>function</b></font> Proc8(x,y:<font color="#2e8b57"><b>Integer</b></font>;f:<font color="#2e8b57"><b>Byte</b></font>):<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>var</b></font> i,j:<font color="#2e8b57"><b>Integer</b></font>;Res:<font color="#2e8b57"><b>Boolean</b></font>;
+  <font color="#804040"><b>begin</b></font>
+       <font color="#804040"><b>if</b></font> (x+H&gt;m)<font color="#804040"><b>or</b></font>(y+W&gt;n) <font color="#804040"><b>then</b></font>
+       <font color="#804040"><b>begin</b></font>
+            Proc8:=<font color="#ff00ff">false</font>;
+            <font color="#008080">Exit</font>;
+       <font color="#804040"><b>end</b></font>;
+       Proc8:=<font color="#ff00ff">true</font>;
+       j:=<font color="#ff00ff">0</font>;
+       <font color="#804040"><b>repeat</b></font>
+             i:=<font color="#ff00ff">0</font>;
+             <font color="#804040"><b>repeat</b></font>
+                   <font color="#804040"><b>if</b></font> (Mat[MinX+i,MinY+j]=f)<font color="#804040"><b>and</b></font>
+                      <font color="#804040"><b>not</b></font> (Mat[x+j,y+i] <font color="#804040"><b>in</b></font> [<font color="#ff00ff">1</font>,Fig]) <font color="#804040"><b>then</b></font> Proc8:=<font color="#ff00ff">false</font>;
+                   <font color="#008080">inc</font>(i);
+             <font color="#804040"><b>until</b></font> i&gt;W;
+             <font color="#008080">inc</font>(j);
+       <font color="#804040"><b>until</b></font> j&gt;W;
+  <font color="#804040"><b>end</b></font>;
+
+
+  <font color="#804040"><b>begin</b></font>
+       MinX:=m;
+       MinY:=n;
+       MaxX:=<font color="#ff00ff">1</font>;
+       MaxY:=<font color="#ff00ff">1</font>;
+       <font color="#804040"><b>for</b></font> j:=<font color="#ff00ff">1</font> <font color="#804040"><b>to</b></font> n <font color="#804040"><b>do</b></font>
+           <font color="#804040"><b>for</b></font> i:=<font color="#ff00ff">1</font> <font color="#804040"><b>to</b></font> m <font color="#804040"><b>do</b></font>
+               <font color="#804040"><b>if</b></font> Mat[i,j]=Fig <font color="#804040"><b>then</b></font>
+               <font color="#804040"><b>begin</b></font>
+                    <font color="#804040"><b>if</b></font> i&lt;MinX <font color="#804040"><b>then</b></font> MinX:=i
+                    <font color="#804040"><b>else</b></font> <font color="#804040"><b>if</b></font> i&gt;MaxX <font color="#804040"><b>then</b></font> MaxX:=i;
+                    <font color="#804040"><b>if</b></font> j&lt;MinY <font color="#804040"><b>then</b></font> MinY:=j
+                    <font color="#804040"><b>else</b></font> <font color="#804040"><b>if</b></font> j&gt;MaxY <font color="#804040"><b>then</b></font> MaxY:=j;
+               <font color="#804040"><b>end</b></font>;
+       W:=MaxX-MinX;H:=MaxY-MinY;
+       Res:=<font color="#ff00ff">false</font>;
+       y:=<font color="#ff00ff">1</font>;
+       <font color="#804040"><b>repeat</b></font>
+             x:=<font color="#ff00ff">1</font>;
+             <font color="#804040"><b>repeat</b></font>
+                   Res:=Proc1(x,y,Fig);
+                   <font color="#804040"><b>if</b></font> Res <font color="#804040"><b>then</b></font> <font color="#008080">Break</font>;
+                   Res:=Proc2(x,y,Fig);
+                   <font color="#804040"><b>if</b></font> Res <font color="#804040"><b>then</b></font> <font color="#008080">Break</font>;
+                   Res:=Proc3(x,y,Fig);
+                   <font color="#804040"><b>if</b></font> Res <font color="#804040"><b>then</b></font> <font color="#008080">Break</font>;
+                   Res:=Proc4(x,y,Fig);
+                   <font color="#804040"><b>if</b></font> Res <font color="#804040"><b>then</b></font> <font color="#008080">Break</font>;
+                   Res:=Proc5(x,y,Fig);
+                   <font color="#804040"><b>if</b></font> Res <font color="#804040"><b>then</b></font> <font color="#008080">Break</font>;
+                   Res:=Proc6(x,y,Fig);
+                   <font color="#804040"><b>if</b></font> Res <font color="#804040"><b>then</b></font> <font color="#008080">Break</font>;
+                   Res:=Proc7(x,y,Fig);
+                   <font color="#804040"><b>if</b></font> Res <font color="#804040"><b>then</b></font> <font color="#008080">Break</font>;
+                   Res:=Proc8(x,y,Fig);
+                   <font color="#008080">inc</font>(x);
+             <font color="#804040"><b>until</b></font> Res <font color="#804040"><b>or</b></font> (x&gt;m);
+             <font color="#008080">inc</font>(y)
+       <font color="#804040"><b>until</b></font> Res <font color="#804040"><b>or</b></font> (y&gt;n);
+       CheckFig:=Res;
+  <font color="#804040"><b>end</b></font>;
+
+<font color="#0000ff">{== Body ===}</font>
+<font color="#804040"><b>begin</b></font>
+     <font color="#804040"><b>if</b></font> <font color="#804040"><b>not</b></font> CheckFig(<font color="#ff00ff">2</font>) <font color="#804040"><b>then</b></font> Check:=<font color="#ff00ff">false</font>
+     <font color="#804040"><b>else</b></font> Check:=CheckFig(<font color="#ff00ff">3</font>);
+<font color="#804040"><b>end</b></font>;
+
+<font color="#804040"><b>procedure</b></font> vibor(<font color="#804040"><b>var</b></font> a,b:<font color="#2e8b57"><b>integer</b></font>;  f:field);
+<font color="#804040"><b>var</b></font>
+i,j:<font color="#2e8b57"><b>integer</b></font>;
+<font color="#804040"><b>begin</b></font>
+ <font color="#804040"><b>for</b></font> i:=<font color="#ff00ff">1</font> <font color="#804040"><b>to</b></font> m <font color="#804040"><b>do</b></font> <font color="#804040"><b>begin</b></font>
+  <font color="#804040"><b>for</b></font> j:=<font color="#ff00ff">1</font> <font color="#804040"><b>to</b></font> n <font color="#804040"><b>do</b></font> <font color="#804040"><b>begin</b></font>
+   <font color="#804040"><b>if</b></font> (f[i,j]=<font color="#ff00ff">1</font>) <font color="#804040"><b>and</b></font> (((f[i+<font color="#ff00ff">1</font>,j]=<font color="#ff00ff">2</font>) <font color="#804040"><b>or</b></font> (f[i<font color="#ff00ff">-1</font>,j]=<font color="#ff00ff">2</font>)) <font color="#804040"><b>or</b></font>((f[i+<font color="#ff00ff">1</font>,j]=<font color="#ff00ff">2</font>) <font color="#804040"><b>or</b></font> (f[i+<font color="#ff00ff">1</font>,j]=<font color="#ff00ff">2</font>))) <font color="#804040"><b>then</b></font> <font color="#804040"><b>begin</b></font>
+      a:=i;
+      b:=j;
+      i:=m;
+      j:=n;
+   <font color="#804040"><b>end</b></font>;
+  <font color="#804040"><b>end</b></font>;
+ <font color="#804040"><b>end</b></font>;
+<font color="#804040"><b>end</b></font>;
+
+<font color="#804040"><b>procedure</b></font> perebor( <font color="#804040"><b>var</b></font> f:field);
+<font color="#804040"><b>var</b></font>
+ a,b:<font color="#2e8b57"><b>integer</b></font>;
+<font color="#804040"><b>begin</b></font>
+vibor(a,b,f);
+F[a,b]:=<font color="#ff00ff">2</font>;
+<font color="#804040"><b>IF</b></font> check(f) <font color="#804040"><b>THEN</b></font> PEREBOR(f)
+              <font color="#804040"><b>ELSE</b></font> <font color="#804040"><b>BEGIN</b></font> F[a,b]:=<font color="#ff00ff">3</font>; PEREBOR(f); <font color="#804040"><b>END</b></font>;
+F[a,b]:=<font color="#ff00ff">1</font>;
+<font color="#804040"><b>end</b></font>;
+
+<font color="#804040"><b>procedure</b></font> inp(<font color="#804040"><b>var</b></font> F:field; <font color="#804040"><b>var</b></font> m,n:<font color="#2e8b57"><b>integer</b></font>);
+<font color="#804040"><b>var</b></font>
+ fl:<font color="#2e8b57"><b>text</b></font>;
+<font color="#0000ff">{ i:integer;}</font>
+<font color="#804040"><b>begin</b></font>
+ <font color="#008080">assign</font>(fl,<font color="#ff00ff">'matrix.dat'</font>);
+ <font color="#008080">reset</font>(fl);
+ n:=<font color="#ff00ff">0</font>;
+ <font color="#804040"><b>while</b></font> <font color="#804040"><b>not</b></font> <font color="#008080">EOF</font>(fl) <font color="#804040"><b>do</b></font>
+       <font color="#804040"><b>begin</b></font>
+            m:=<font color="#ff00ff">0</font>;
+            <font color="#008080">inc</font>(n);
+            <font color="#804040"><b>while</b></font> <font color="#804040"><b>not</b></font> <font color="#008080">EOLn</font>(fl) <font color="#804040"><b>do</b></font>
+            <font color="#804040"><b>begin</b></font>
+                 <font color="#008080">inc</font>(m);
+                 <font color="#008080">read</font>(fl,F[m,n]);
+            <font color="#804040"><b>end</b></font>;
+            <font color="#008080">ReadLn</font>(fl);
+       <font color="#804040"><b>end</b></font>;
+ <font color="#008080">close</font>(fl);
+<font color="#0000ff">{ n:=1;</font>
+<font color="#0000ff"> while (not EOF(fl)) do</font>
+<font color="#0000ff">       begin</font>
+<font color="#0000ff">       n:=n+1;</font>
+<font color="#0000ff">       for i:=1 to m do</font>
+<font color="#0000ff">       read(fl,F[i,n])</font>
+<font color="#0000ff"> end;}</font>
+<font color="#804040"><b>end</b></font>;
+
+<font color="#804040"><b>procedure</b></font> out (<font color="#804040"><b>var</b></font> F:field);
+<font color="#804040"><b>var</b></font>
+   fl:<font color="#2e8b57"><b>text</b></font>;
+   i,j:<font color="#2e8b57"><b>integer</b></font>;
+<font color="#804040"><b>begin</b></font>
+<font color="#008080">assign</font>(fl,<font color="#ff00ff">'matrix2.dat'</font>);
+<font color="#008080">rewrite</font>(fl);
+<font color="#804040"><b>for</b></font> j:=<font color="#ff00ff">1</font> <font color="#804040"><b>to</b></font> n <font color="#804040"><b>do</b></font>
+  <font color="#804040"><b>begin</b></font>
+    <font color="#804040"><b>for</b></font> i:=<font color="#ff00ff">1</font> <font color="#804040"><b>to</b></font> m <font color="#804040"><b>do</b></font>
+        <font color="#008080">write</font>(fl, F[i,j]:<font color="#ff00ff">5</font>);
+    <font color="#008080">writeln</font>(fl)
+  <font color="#804040"><b>end</b></font>;
+<font color="#008080">close</font>(fl);
+<font color="#804040"><b>end</b></font>;
+
+<font color="#0000ff">{----------------------------}</font>
+<font color="#804040"><b>begin</b></font>
+ inp(F, m, n);
+ one;
+ perebor(f);
+ out(f);
+<font color="#804040"><b>end</b></font>.
+</pre>
+
+<!-- #EndEditable -->
+<p align="right"><a href="#top">наверх страницы</a></p>
+
+</body>
+
+<!-- #EndTemplate -->
+
+</html>

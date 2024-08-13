@@ -1,0 +1,124 @@
+<html>
+
+<head>
+<title>Mosaic</title>
+<style type="text/css">
+body {
+	margin-left: 0px;
+	margin-top:  0px;
+}
+</style>
+</head>
+
+<body marginheight="0" marginwidth="0" scroll="no">
+
+<nobr>
+<script language="JavaScript"> <!--
+var empty_url = '../../images/empty.gif'
+var randSwapH, curi, curj, hiddenSrc, hiddenName, randSeed = 1, m, n, pdir, sizewh, state = 1
+
+function ijtoIm(i, j)
+{
+	return "document.im" + i + "_" + j + ".src"
+}
+
+function rand( m )
+{
+	randSeed = 427419669081*randSeed % 999999999989
+	return randSeed % m
+}
+
+function swap(i, j)
+{
+	var di = i-curi, dj = j-curj
+
+	if ((!di) && (!dj)) return false
+	if (Math.abs(di) > Math.abs(dj))
+		if (di>0) aswap(curi+1, curj)
+		else aswap (curi-1, curj)
+	else
+		if (dj>0) aswap(curi, curj+1)
+		else aswap (curi, curj-1)
+}
+
+var re = /\D(\d*)_(\d*)\./
+re.compile
+
+function ready()
+{
+	var rr
+	for (i=0; i<n; i++)
+	  for (j=0; j<m; j++)
+	  {
+		rr = eval(ijtoIm(i, j)).match(re)
+		if (rr)
+			if (!((parseInt(rr[1]) == i) && (parseInt(rr[2]) == j))) return false
+	  }
+	return true
+}
+
+function aswap(i, j)
+{
+	var im = ijtoIm(i, j), cur = ijtoIm(curi, curj)
+
+	eval(cur + "=" + im)
+	eval(im + '= "' + empty_url + '"')
+	curi = i
+	curj = j
+}
+
+function act(i, j)
+{
+	if (state==1)
+	{
+		curi = i
+		curj = j
+		hiddenName = ijtoIm(i, j)
+		hiddenSrc = eval(hiddenName)
+		eval(hiddenName + '= "' + empty_url + '"')
+		randSwapH = setInterval("swap(rand(n), rand(m))", 20)
+		state = 2
+	}
+	else if (state==2)
+	{
+		clearInterval(randSwapH)
+		state = 0
+	}
+	else
+	{
+		swap(i, j)
+		if (ready())
+		{
+			state = 1
+			eval(hiddenName + ' = hiddenSrc')
+			alert("You've done it!")
+		}
+	}
+}
+
+
+var s = "", t
+t = self.location.search.match(/\?(\d*),(\d*),(\d*),(\d*),(\w*)$/)
+m = parseInt(t[1])
+n = parseInt(t[2])
+sizewh = " WIDTH=" + t[3] + " HEIGHT=" + t[4]
+var empty_image = new Image(t[3], t[4])
+empty_image.src = empty_url
+pdir = t[5] + "/"
+
+for (i=0; i<n; i++) {
+  for (j=0; j<m; j++) {
+	s += "<A HREF=\"javascript:void(act(" + i + ", " + j + "))\"><IMG BORDER=0 NAME=im" + i + "_" + j + " SRC=" + pdir + i + "_" + j + ".jpg" + sizewh + "></A>"
+//	t = new Image()
+//	t.src = pdir + i + '_' + j + '.jpg'
+  }
+s += "<BR>" }
+
+document.write(s)
+// -->
+</script>
+</nobr>
+
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+body {
+	background-image: url("../images/bg-gray.jpg");
+	font-family: Times, serif;
+	line-height: normal;
+	color: black;
+	font-size: 12pt;
+	}
+table {
+	margin: 0em;
+	padding: 0em;
+	border-collapse: collapse;
+	font-family: Times, serif;
+	line-height: normal;
+	color: black;
+	font-size: 12pt;
+	}
+td {
+	padding: 0em;
+	text-align: left;
+}
+a	{
+	text-decoration: none;
+	font-style: italic;
+	}
+a:link {
+	color: MidnightBlue;
+}
+a:visited {
+	color: Black;
+}
+img {
+	vertical-align: top;
+	border: 0px;
+}
+p {
+	text-align: justify;
+}
+h4	{
+	color: black;
+	font-style: bold;
+	font-size : 12pt;
+	}
+h3	{
+	color: black;
+	font-size : 14pt;
+	}
+h2	{
+	color: black;
+	font-size : 18pt;
+	}
+h1	{
+	color: black;
+	font-size : 24pt;
+	}
+ul, ol {
+	text-align: justify;
+}
+/*	Special classes */
+.right-ref {
+	font-family: Times, serif;
+	font-size: 10pt;
+	font-style: normal;
+	color: black;
+	text-align: right;
+}
+td.folder {
+	font-family: Times, serif;
+	font-size: 7pt;
+	font-style: normal;
+	color: black;
+	background-image:url("../images/local-grey.jpg");
+	width: 30px;
+	height: 30px;
+	text-align: center;
+}
+.vertical {
+  background-image:url("../images/bg-gr-vertical.jpg");
+  background-repeat: repeat-y;
+}
+.border {
+	border: 1px black solid;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	padding-left: 8px;
+	padding-right: 8px; 
+}
+.float-text {
+	margin-right: 8px;
+	text-align: center;
+}

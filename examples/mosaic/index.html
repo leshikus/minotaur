@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.2//EN">
+<html>
+
+<head>
+<title>Mosaic</title>
+<meta http-equiv="content-type" content="text/html; charset=Windows-1251" />
+<meta name="keywords" content="HTML,JavaScript,C++,Perl,cookbook,example,color,ISO,Latin-1" />
+<meta name="description" content="Alexei Fedotov Homepage.  C++, Java, ASP, JavaScript, Perl programming." />
+<meta name="owner" content="alexei.fedotov.at.gmail.com" />
+<meta name="document-state" content="static" />
+<meta name="language" content="ru" />
+<meta name="author" content="Alexei Fedotov" />
+<link rel="stylesheet" href="../../include/root.css" type="text/css" />
+<script type="text/javascript" src="../../include/root.js"></script>
+<script language="JavaScript">
+var nn=0, data = new Array(), capt = ''
+
+function Mosaic(pdir, m, n)
+{
+	this.d = pdir
+	this.m = m
+	this.n = n
+	this.im = new Image()
+	this.im.src = this.d + '/0_0.jpg'
+	this.win = 0
+}
+
+function addItem(pdir, name, m, n)
+{
+	pdir
+	data[nn] = new Mosaic(pdir, m, n)
+	with(document)
+	{
+		write('<TD ALIGN=center VALIGN=middle>&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="javascript:void(msStart(' + nn + '))" onMouseOver="self.status=\'' + name + '\'; return true"><IMG SRC="' + pdir + '/0.jpg" BORDER=0></A></TD>\n')
+		capt += '<TD ALIGN=center NOWRAP>' + name + '<BR>(' + m + ' x ' + n + ')<BR></TD>\n'
+		if (nn++ % 2)
+		{
+			write('</TR><TR>\n', capt, '</TR><TR>\n')
+			capt = ''
+		}
+	}
+}
+
+function msStart(nn)
+{
+  if (data[nn].im.height>0) with(data[nn])
+  {
+	win = window.open("mosaicpic.html?" + m + "," + n + "," + im.width + "," + im.height + "," + d, "_blank", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,width=" + (im.width*m) + ",height=" + (im.height*n))
+  }
+  else setTimeout("msStart(" + nn + ")", 500)
+}
+</script>
+</head>
+
+<body>
+
+<center>
+<h2>Мозаики</h2>
+<table cols="2" width="500">
+	<tbody>
+	<tr>
+		<td colspan="2">
+		<p align="justify">Кликнинте мышкой на картинку - она появится в новом окошке. 
+		Два раза кликните на картинку в новом окошке - и можно начинать ее восстанавливать, 
+		как в игре 15.</p>
+		
+		<p>Most images are provided by <a href="http://www.cophoto.com">Chapman Outdoor Photography</a>,
+		their <a href="http://www.cophoto.com">site</a> contains much more nice images. Please take a look.</p>
+		</td>
+	</tr>
+	<tr>
+		<script type="text/javascript">
+addItem("daf", "Как называется?", 4, 7)
+addItem("photo061", "Подснежник", 5, 7)
+addItem("photo062", "Подснежник распустился", 5, 7)
+addItem("fg", "Роза", 3, 4)
+addItem("bushmaster", "Мапапи Занана", 4, 3)
+addItem("a164", "Гвоздика", 4, 3)
+addItem("cedar_glades", "Кедровая поляна", 5, 3)
+addItem("photo28", "Как называется?", 8, 5)
+addItem("photo057", "Ромашки", 5, 3)
+addItem("f28", "Ромашки?", 5, 3)
+addItem("tulip", "Тюльпаны", 5, 3)
+addItem("f27", "Цвет", 7, 4)
+</script>
+	</tr>
+</tbody>
+</table>
+</center>
+
+</body>
+
+</html>

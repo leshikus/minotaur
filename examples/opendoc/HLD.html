@@ -1,0 +1,5407 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content=
+      "text/html; charset=windows-1252">
+      <title>
+         OPEN (Open Pluggable Extensible iNfrastructure)
+      </title>
+      <link rel="Stylesheet" type="text/css" media="all" href=
+      "drl.css">
+   </head>
+   <body>
+      <h1 style="text-align: center">
+         Apache Harmony<br>
+         Open Pluggable Extensible iNfrastructure (OPEN)
+      </h1>
+      <h3 style="font-weight: bold; text-align: center">
+         Draft Proposal
+      </h3>
+      <h2 style="text-align: center">
+         <a name="Top"></a> High-Level Design
+      </h2>
+      <p class="TOCHeading">
+         <a href="#Revision_History">1. Revision History</a>
+      </p>
+      <p class="TOCHeading">
+         <a href="#Disclaimer">2. Disclaimer</a>
+      </p>
+      <p class="TOCHeading">
+         <a href="#Introduction">3. About This Document</a>
+      </p>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#Purpose">3.1 Purpose</a><br>
+         <a href="#Intended_audience">3.2 Intended Audience</a><br>
+         <a href="#Notation_conventions">3.3 Notation Conventions</a><br>
+          <a href="#Acronyms_and_definitions">3.4 Acronyms and
+         Definitions</a>
+	  </div>
+	  </blockquote>
+<p class="TOCHeading">
+         <a href="#Assumptions_and_Dependencies">4. Assumptions and
+         Dependencies</a>
+   </p>
+      <p class="TOCHeading">
+         <a href="#High-level_Design">5. High-level Design</a>
+      </p>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#Overview">5.1 Overview</a><br>
+         <a href="#Component_Structure">5.2 Component Structure</a>
+      </div>
+	 
+      <blockquote>
+         <div class="TOC">
+            <a href="#About_Component_Structure">5.2.1 About
+            Components</a><br>
+            <a href="#Linking_Models">5.2.2 Linking Models</a><br>
+            <a href="#Component_Interfaces">5.2.3 Component
+            Interfaces</a><br>
+            <a href="#Component_Instances">5.2.4 Component Instances</a>
+         </div>
+      </blockquote></blockquote>
+	  <blockquote>
+	        <div class="TOC">
+			<a href="#IndividualComponents">5.3 Individual Components Description </a>
+			</div>
+	        <blockquote>
+         <div class="TOC">
+            <a href="#Java_class_libraries">5.3.1 Java* Class
+            Libraries</a><br>
+             <a href="#Accessors">5.3.2 VM and Platform Accessors</a><br>
+             <a href="#VM_core">5.3.3 VM Core</a><br>
+             <a href="#Thread_manager">5.3.4 Thread Manager</a><br>
+             <a href="#Garbage_collector">5.3.5 Garbage Collector</a><br>
+             <a href="#OS_portability_layer">5.3.6 OS Portability
+            Layer</a><br>
+             <a href="#Execution_manager">5.3.7 Execution Manager</a><br>
+             <a href="#Profile_collector">5.3.8 Profile Collector</a><br>
+             <a href="#Execution_engine">5.3.9 Execution Engine</a><br>
+             <a href="#Managed_code">5.3.10 Managed Code</a><br>
+             <a href="#TI suppport">5.3.11 Tool Interface: Debugging and
+            Profiling Support</a>
+         </div>
+      </blockquote>
+   </blockquote>
+   <blockquote>
+         <div class="TOC">
+         <a href="#Deployment_Model">5.4 Deployment Model</a>
+		 <blockquote>
+		 <div class="TOC">
+		          <a href="#OpenHeaders">5.4.1 OPEN Header Files</a>
+		</div>
+	</blockquote>
+         <a href="#Common_Data_Types">5.5 Common Data Types</a><br>
+         <a href="#Object_Model">5.6 Key Data Structures</a>
+      </div>
+         <blockquote>
+         <div class="TOC">
+            <a href="#VM_core_object">5.6.1 VM Core</a><br>
+             <a href="#Thread_manager_object">5.6.2 Thread Manager</a><br>
+             <a href="#Execution_engine_object">5.6.3 Execution Engine</a>
+         </div>
+      </blockquote>
+   </blockquote>
+      <p class="TOCHeading">
+         <a href="#Communication_scenarios">6. Inter-component
+         Communication Scenarios</a>
+      </p>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#About_Scenarios">6.1 About</a><br>
+         <a href="#Basic_communication">6.2 Basic Communication</a>
+      </div>
+      <blockquote>
+         <div class="TOC">
+            <a href="#BC.INIT">6.2.1 VM Instance Creation</a><br>
+             <a href="#BC.CLD">6.2.2 Component Loading</a><br>
+             <a href="#BC.CI">6.2.3 Component Instantiation and Interface
+            Query</a>
+         </div>
+      </blockquote>
+	  </blockquote>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#Method_Execution">6.3 Method Execution</a>
+      </div>
+      <blockquote>
+         <div class="TOC">
+            <a href="#ME.EM">6.3.1 Interaction between the VM and the
+            Execution Manager</a>
+         <br>
+
+            <a href="#ME.JIT">6.3.2 Compilation by JIT</a>
+         <br>
+
+            <a href="#ME.PGR">6.3.3 Profile-guided Recompilation by JIT</a>
+         <br>
+
+            <a href="#Profile_management">6.3.4 Profile Management and DPGO
+            Scenarios</a>
+         </div>
+      </blockquote>
+	  </blockquote>
+	  <blockquote>
+	  <div class="TOC"><a href="#Profile_management">6.4 PM. Profile Management and
+         DPGO Scenarios</a>
+      </div>
+	  <blockquote>
+      <div class="TOC">
+         <a HREF="#PMPCB">6.4.1 PM.PC.B Basic Interaction between the Execution Manager and
+         the Profiler Collector</a>
+      </div>
+      </blockquote>
+	  </blockquote>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#Stack_Unwinding">6.5 Stack Unwinding</a>
+      </div>
+      <blockquote>
+         <div class="TOC">
+            <a href="#SF.JIT">6.5.1 Unwinding of a Compiled Frame</a>
+         <br>
+
+            <a href="#SF.JIT.INL">6.5.2 Unwinding of an In-lined Compiled
+            Frame</a>
+         </div>
+      </blockquote>
+	  </blockquote>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#Exception_handling">6.6 Exception Handling</a>
+      </div>
+      <blockquote>
+         <div class="TOC">
+            <a href="#EX.THR.JIT">6.6.1 Exception Throwing from a Compiled
+            Frame</a>
+         <br>
+
+            <a href="#EX.THR.UNM">6.6.2 Exception Throwing from an
+            Unmanaged Frame</a>
+         <br>
+
+            <a href="#EX.HND">6.6.3 Exception Handling</a>
+         </div>
+	    </blockquote>
+      </blockquote>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#Thread_Management">6.7 Thread Management</a>
+      </div>
+      <blockquote>
+         <div class="TOC">
+            <a href="#TM.NEW">6.7.1 6Java* Thread Creation</a>
+         <br>
+
+            <a href="#TM.END">6.7.2 Thread Completion</a>
+         <br>
+
+            <a href="#TM.SUS">6.7.3 Thread Suspension</a>
+         <br>
+
+            <a href="#TM.SUS.ALL">6.7.4 Stop-the-world Thread
+            Suspension</a>
+         <br>
+
+            <a href="#TM.LCK">6.7.5 Thread Locking</a>
+         <br>
+
+            <a href="#TM.LCK.MON">6.7.6. Conventional Locking through
+            Monitors</a>
+         </div>
+	    </blockquote>
+      </blockquote>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#Memory_Management">6.8 Memory Management</a>
+      </div>
+      <blockquote>
+         <div class="TOC">
+            <a href="#MM.GC.INIT">6.8.1 GC Handshaking and
+            Initialization</a><br>
+			<a href="#MM.GC.SHUT">6.8.2 Garbage Collector
+         Shutdown</a>
+         <br>
+
+            <a href="#MM.GC.CLSS">6.8.3 Class Preparation</a>
+         <br>
+
+            <a href="#MM.GC.THR">6.8.4 Java* Thread Initialization and
+            Termination</a>
+         <br>
+
+            <a href="#MM.GC.RSE">6.8.5 Thread Suspension and Root Set
+            Enumeration</a>
+         <br>
+
+            <a href="#MM.GC.RSE.JIT">6.8.6 Root Set Enumeration for a
+            Compiled Frame</a>
+         <br>
+
+            <a href="#MM.GC.STW">6.8.7 Basic Stop-the-world Garbage
+            Collection</a>
+         <br>
+
+            <a href="#MM.GC.WB">6.8.8 Write Barriers</a>
+         <br>
+
+            <a href="#MM.GC.RB">6.8.9 Read Barriers</a>
+         <br>
+
+            <a href="#MM.GC.FIN">6.8.10 Object Finalization during Garbage
+            Collection</a>
+         <br>
+
+            <a href="#MM.GC.CONC">6.8.11 Individual Thread Control for Fully
+            Concurrent GC</a>
+         </div>
+	    </blockquote>
+      </blockquote>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#Accessor_interfaces">6.9 Accessors</a>
+      </div>
+      <blockquote>
+         <div class="TOC">
+            <a href="#A.NM">6.9.1 Access to Native Memory</a><br>
+            <a href="#A.AL">6.9.2 Array Locking</a><br>
+            <a href="#A.OS">6.9.3 Object Accessor and Serialization</a>
+         </div>
+	    </blockquote>
+      </blockquote>
+      <p class="TOCHeading">
+         <a href="#References">7. References</a>
+      </p>
+      <p class="TOCHeading">
+         <a href="#Appendices">8. Appendices</a>
+      </p>
+	  <blockquote>
+      <div class="TOC">
+         <a href="#Component_Default_Interface">8.1 Appendix A. Component
+         Default Interface</a><br>
+          <a href="#Interface_Layout">8.2 Appendix B. Interface
+         Layout</a>
+      </div>
+	  
+      <blockquote>
+         <div class="TOC">
+            <a href="#Layout_Organization">8.2.1 Layout Organization</a>
+         <br>
+
+            <a href="#Naming_Conventions">8.2.2 Naming Conventions</a>
+         <br>
+
+            <a href="#Directory_Structure">8.2.3 Directory Structure</a>
+         </div>
+      </blockquote>
+      <div class="TOC">
+         <a href="#Numbering_scheme">8.3 Appendix C. Numbering Scheme</a>
+      </div>
+</blockquote>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h1>
+         <a name="Revision_History"></a>1. Revision History
+      </h1>
+      <table width="100%">
+         <tr>
+            <td class="TableHeading" width="25%">
+               Version
+            </td>
+            <td class="TableHeading" width="50%">
+               Version Information
+            </td>
+            <td class="TableHeading">
+               Date
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell" width="25%">
+               Initial version
+            </td>
+            <td class="TableCell" width="25%">
+               Ricardo Morin, Nadya Morozova: document created
+            </td>
+            <td class="TableCell">
+               April 20, 2006 </td>
+         </tr>
+         <tr>
+            <td class="TableCell" width="25%">
+            </td>
+            <td class="TableCell" width="25%">
+            </td>
+            <td class="TableCell">
+            </td>
+         </tr>
+      </table>
+      <h1>
+         <a name="Disclaimer"></a>2. Disclaimer and Legal Information
+      </h1>
+      <p>
+         Copyright 2005 The Apache Software Foundation or its
+         licensors, as applicable.
+      </p>
+      <p>
+         Licensed under the Apache License, Version 2.0 (the
+         "License"); you may not use this file except in compliance
+         with the License. You may obtain a copy of the License at <a
+         href=
+         "http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>.
+      </p>
+      <p>
+         Unless required by applicable law or agreed to in writing,
+         software distributed under the License is distributed on an
+         "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+         either express or implied. See the License for the specific
+         language governing permissions and limitations under the
+         License.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h1>
+         <a name="Introduction"></a> 3. About This Document
+      </h1>
+      <h2>
+         <a name="Purpose">3.1 Purpose</a>
+      </h2>
+      <p>
+         This document identifies the design components and the
+         interfaces for implementing the Harmony Java<a href=
+        "#*">*</a> Virtual Machine in a modular fashion. The document
+         is not intended to describe the design associated with
+         specific implementations of OPEN components.
+      </p>
+      <h2>
+         <a name="Intended_audience">3.2 Intended Audience</a>
+      </h2>
+      <p>
+         The intended audience includes a wide community of those
+         interested in developing pluggable components for the Apache
+         Harmony JVM.
+      </p>
+      <h2>
+         <a name="Notation_conventions">3.3 Notation Conventions</a>
+      </h2>
+      <p>
+         This document uses the <a href="conventions.htm">unified
+         conventions</a> for the DRL documentation kit.
+      </p>
+      <h2>
+         <a name="Acronyms_and_definitions">3.4 Acronyms and
+         Definitions</a>
+      </h2>
+      <p>
+         The table below lists the key abbreviations used in this
+         document and provides their definitions.
+      </p>
+      <table width="100%">
+         <tr>
+            <td class="TableHeading">
+               Acronym
+            </td>
+            <td class="TableHeading">
+               Definition
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               API
+            </td>
+            <td class="TableCell">
+               Application Program Interface
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               APR
+            </td>
+            <td class="TableCell">
+               Apache Portable Run-time Layer
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               DPGO
+            </td>
+            <td class="TableCell">
+               Dynamic Profile-guided Optimizations
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               EE
+            </td>
+            <td class="TableCell">
+               Execution Engine
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               EM
+            </td>
+            <td class="TableCell">
+               Execution Manager
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               GC
+            </td>
+            <td class="TableCell">
+               Garbage Collector
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               IR
+            </td>
+            <td class="TableCell">
+               Intermediate Representation
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               HLD
+            </td>
+            <td class="TableCell">
+               High-level Design
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               J2SE
+            </td>
+            <td class="TableCell">
+               Java<a href="#*">*</a> 2 Standard Edition
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               JCP
+            </td>
+            <td class="TableCell">
+               Java<a href="#*">*</a> Community Process
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               JCL
+            </td>
+            <td class="TableCell">
+               Java<a href="#*">*</a> Class Libraries
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               JIT
+            </td>
+            <td class="TableCell">
+               Just-in-time Compiler
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               JNI
+            </td>
+            <td class="TableCell">
+               Java<a href="#*">*</a> Native Interface
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               JPDA
+            </td>
+            <td class="TableCell">
+               Java<a href="#*">*</a> Platform Debugger Architecture
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               JSR
+            </td>
+            <td class="TableCell">
+               Java<a href="#*">*</a> Specification Request at the JCP
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               JVM
+            </td>
+            <td class="TableCell">
+               Java<a href="#*">*</a> Virtual Machine
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               JVMTI
+            </td>
+            <td class="TableCell">
+               JVM Tool Interface
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               OPEN
+            </td>
+            <td class="TableCell">
+               Open Pluggable Extensible iNfrastructure
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               OS
+            </td>
+            <td class="TableCell">
+               Operating System
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               PA, VMA
+            </td>
+            <td class="TableCell">
+               Platform and VM Accessors
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               TLS
+            </td>
+            <td class="TableCell">
+               Thread Local Storage
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               TM
+            </td>
+            <td class="TableCell">
+               Thread Manager
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               VM
+            </td>
+            <td class="TableCell">
+               Virtual Machine, same as JVM in current document
+            </td>
+         </tr>
+      </table>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h1>
+         <a name="Assumptions_and_Dependencies"></a> 4. Assumptions and
+         Dependencies
+      </h1>
+      <p>
+         The interfaces follow the Apache coding style <a href= 
+         "http://httpd.apache.org/dev/styleguide.html">http://httpd.apache.org/dev/styleguide.html</a>.
+      </p>
+      <h1>
+         <a name="High-level_Design"></a>5. High-level Design
+      </h1>
+      <h2>
+         <a name="Overview"></a>5.1 Overview
+      </h2>
+      <p>
+         The Apache Harmony is a clean room implementation of the
+         Java<a href="#*">*</a> virtual machine and the Java<a href=
+        "#*">*</a> 2 Standard Edition (J2SE) class libraries. The
+         Open Pluggable Extensible iNfrastructure (OPEN) is a JVM
+         design consisting of pluggable modules. The key features of
+         OPEN are: pluggability, extensibility, modularity, and
+         performance.
+      </p>
+      <h2>
+         <a name="Component_Structure"></a>5.2 Component Structure
+      </h2>
+      <h3>
+         <a name="About_Component_Structure"></a> 5.2.1 About Components
+      </h3>
+      <p>
+         The basis of the OPEN environment is the standard list of
+         pluggable components. As viewed by OPEN, a managed run-time
+         environment consists of the following components:
+      </p>
+      <ul>
+         <li>
+            <a href="#Java_class_libraries">Class libraries</a>
+         
+         <li>
+            <a href="#Accessors">Accessors</a>
+         
+         <li>
+            <a href="#VM_core">VM core</a>
+         
+         <li>
+            <a href="#Thread_manager">Thread manager</a>
+         
+         <li>
+            <a href="#Garbage_collector">Garbage collector</a>
+         
+         <li>
+            <a href="#OS_portability_layer">OS portability layer</a>
+         
+         <li>
+            <a href="#Execution_manager">Execution manager</a>
+         
+         <li>
+            <a href="#Profile_collector">Profile collector</a>
+         
+         <li>
+            <a href="#Execution_engine">Execution engine</a>
+         
+         <li>
+            <a href="#Managed_code">Managed code</a>
+         
+      </ul>
+      <p class="note">
+         Note
+      </p>
+      <p class="notetext">
+         The profile collector is an optional component, and it is
+         not required for normal operation of the system. For
+         details, see section <a href="#Deployment_Model">5.4 Deployment
+         Model</a>.
+      </p>
+      <p>
+         Depending on the configuration, the system can use multiple
+         execution engine components, for example, an interpreter and
+         optimizing JIT. Similarly, the system can be configured to
+         use multiple profile manager components, for example,
+         hardware and instrumentation-based profile collectors.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Linking_Models"></a>5.2.2 Linking Models
+      </h3>
+      <p>
+         A component corresponds to one static or dynamic library. A
+         managed run-time environment consists of several libraries
+         linked statically or dynamically at run time:
+      </p>
+      <ul>
+         <li>
+            Unconditionally required components, such as the OS
+            portability layer, are plugged on the source level and
+            are linked statically to the main executable. The same
+            applies to the code, which loads other components, see section <a
+            href="#VM_core_component_management">5.3.6.2 Component
+            Manager</a>.
+         
+         <li>
+            Components required by the VM configuration, such as a
+            specific garbage collector or a JIT compiler, are loaded
+            at run time based on the configuration settings. For
+            example, the virtual machine on a multiprocessor system
+            can load a more complex garbage collector that takes
+            advantage of parallel processing.
+         
+         <li>
+            Third-party components shipped as dynamic libraries, such
+            as the memory manager, are also loaded at run time, and
+            the OPEN standard does not inhibit this option.
+         
+      </ul>
+      <p>
+         The <i>component manager</i> code loads and initializes
+         components. The component manager is a part of the OS
+         portability layer because it cannot be separated from the OS
+         dynamic libraries support.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Component_Interfaces"></a>5.2.3 Component Interfaces
+      </h3>
+      <p>
+         The components use functional interfaces for communication.
+         Each component exposes the <a href= 
+         "#Component_Default_Interface">OPEN default interface</a> to
+         communicate with the component manager, and one or more
+         interfaces for communication with other components.
+      </p>
+      <p>
+         An interface is a pointer to a table of function pointers to
+         pure C methods. OPEN interfaces have string names, which
+         unambiguously identify their function table layout, see <a
+         href="#Naming_Conventions">Appendix B, OPEN Interface
+         Names</a>.
+      </p>
+      <p>
+         The overall organization of the run-time environment and
+         involved interfaces distribution are displayed on Figure 1,
+         where boxes represent components, and lollipops represent
+         exposed interface groups.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt=
+         "Components of an OPEN-compliant Run-time Environment" src= 
+         "images/HLD.gif">
+      </p>
+      <p class="special">
+         Figure 1: OPEN Components
+      </p>
+	  <p class="class">
+         <a name="Extensibility_of_OPEN_interfaces"></a>5.2.3.1 Extensibility
+         of Component Interfaces
+      </p>
+      <p>
+         You can extend OPEN interfaces to enable additional
+         functionality. The OPEN components with extended interfaces
+         must plug into the existing OPEN environment and must work
+         correctly with older versions of other OPEN components and
+         interfaces. To maintain backward compatibility, the
+         extensions of OPEN interfaces must follow the <a href= 
+         "#Numbering_scheme">major and minor
+         numbering scheme</a>.
+</p>
+            <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Component_Instances"></a>5.2.4 Component Instances
+      </h3>
+      <p>
+         The <a href="#Invoc_api_ref">Invocation API</a> requires
+         co-existence of several VM instances. That is why, component
+         instances have been introduced. An instance of a component
+         is a pointer to its interface. The memory chunk after the
+         reference to the function table stores the instance specific
+         data.
+      </p>
+      <p>
+         The OS portability layer always has one instance, its
+         interfaces are static, and the functions of these interfaces
+         are called as ordinary functions to avoid additional
+         indirection. Other components have the same number of
+         instances as the VM core does.
+      </p>
+      <p class="class">
+         Background
+      </p>
+      <p class="notetext">
+         The OPEN components, interfaces and instances map directly
+         to classes, interfaces and objects in the Java<a href=
+        "#*">*</a> object oriented model. The VM component
+         encapsulates common features, attributes and properties of
+         virtual machines, and maps to a Java<a href="#*">*</a> class.
+         VM interfaces are tables of methods implemented and exposed
+         by the class. If several virtual machines exist in the same
+         address space, they all expose the same interfaces. These VM
+         instances are instances of the VM class, or objects.<br>
+         The <a href="#VM_core_component_management">component
+         manager</a> enables explicit creation of component instances
+         by exposing the <code>create_instance()</code> function,
+         which corresponds to the Java<a href="#*">*</a> operator
+         <code>new()</code>. Interfaces with only one instance
+         correspond to static class methods in Java.
+      </p>
+      <p class="notetext">
+         OPEN does not support dynamic class loading, and all
+         components are initialized in a load time.
+      </p>
+      <p>
+         The sections below define each component and provide
+         information on exported interfaces, dependencies and other
+         component specifics.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+</p>
+      <h2><a name="IndividualComponents"></a>5.3 Individual Components Description </h2>
+      <h3>
+         <a name="Java_class_libraries"></a>5.3.1 Java<a href="#*">*</a>
+         Class Libraries
+      </h3>
+      <p>
+         The Java<a href="#*">*</a> class libraries (JCL) comprise the
+         Java<a href="#*">*</a> code included into Apache Harmony
+         distribution, which directly implements or supports the
+         declared profile, for example, J2SE. The Java<a href=
+        "#*">*</a> class libraries include trusted code, so that the
+         standard security restrictions for Java<a href="#*">*</a>
+         code do not apply to this component.
+      </p>
+     
+         <p class="class">
+            5.3.1.1 Use cases
+         </p>
+
+         <p>
+         The Java<a href="#*">*</a> class libraries component
+         interacts with <a href="#Managed_code">unmanaged code</a>
+         through the services provided by the virtual machine. It is
+         similar to all other <a href="#Managed_code">managed
+         code</a> in that aspect, but it has the advantage of having
+         more options for functionality and performance. The options
+         are described below.
+      </p>
+      <ul>
+         <li>
+            <i>Normal execution by the virtual machine</i>.<br>
+             This is the most common case of Java<a href="#*">*</a>
+            code execution when only the virtual machine interacts
+            with unmanaged code.
+         
+         <li>
+            <i>Calling unmanaged code through JNI</i>.<br>
+             This is another common case, when the virtual machine
+            enables managed code to call unmanaged code directly. The
+            implementation of this interface might be slower due to
+            security checks and safety precautions the VM must take.
+         
+         <li>
+            <i>Link between the class libraries and the virtual
+            machine</i>.<br>
+             The <i>kernel classes</i> within the class libraries
+            implement the basic concepts the virtual machine operates
+            on, such as the <code>java.lang.Object</code> and
+            <code>java.lang.Thread</code> classes. These classes
+            cannot be implemented entirely in managed code, since
+            some of their functionality has to map directly to the
+            operating system resources. The functionality that needs
+            to be implemented in kernel classes in unmanaged code is
+            grouped in a separate interface. This acts connects the
+            class libraries and the virtual machine.
+         
+         <li>
+            <i>Optimized calls to unsafe code.</i><br>
+             To bypass security and safety checks associated with JNI
+            calls, unmanaged code can be granted additional
+            permissions via the VM accessor interface.
+         
+      </ul>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Accessors"></a> 5.3.2 VM and Platform Accessors
+      </h3>
+      <p>
+         VM and platform accessors (VMA and PA) are a set of
+         singleton classes that can access the functionality normally
+         unavailable to managed code. Each accessor is designed for a
+         specific purpose: platform accessors provide direct access
+         to the unmanaged heap memory, and VMA provide extended VM
+         functionality, which is not available through the public
+         Java<a href="#*">*</a> API. Instances of VMA and PA are
+         obtained through the <i>accessor factory</i>, which performs
+         security checks to ensure that only Java<a href="#*">*</a>
+         class libraries create and manipulate accessors.
+      </p>
+      <p>
+         An accessor is created when the class libraries code
+         requests a reference to it, and exists until all references
+         to the accessor are lost and the
+         <code>AccessorFactory</code> class is unloaded. VM accessors
+         operate as the normal Java<a href="#*">*</a> classes during
+         garbage collection.
+      </p>
+      <p class="note">
+         Note
+      </p>
+      <p class="notetext">
+         The default PA and VMA can be implemented by means of the
+         conventional JNI API. For better performance, the virtual
+         machine or the JIT compiler may recognize accessor method
+         calls and in-line them efficiently. However, this is not
+         required for the default VM and JIT implementation.
+      </p>
+      
+         <p class="class">
+            5.3.2.1 Platform Accessors
+         </p>
+ 
+         <p>
+         The platform accessors provide the class library with access
+         to unmanaged code, and hide the actual access implementation
+         details. The primary purpose of the
+         <code>PlatformAccessors</code> API is to enable the managed
+         code to pass parameters and query results when dealing with
+         unmanaged code. The platform accessor classes are
+         VM-independent and are linked with the underlying platform.
+         Platforms accessors include:
+      </p>
+      <ul>
+         <li>
+            <code>MemoryAccessor</code> provides managed code direct
+            access to the unmanaged heap memory.
+         
+         <li>
+            <code>StringAccessor</code> enables managed code to
+            convert managed strings to unmanaged strings and vice
+            versa, and allows comparing managed and unmanaged
+            strings.
+         
+      </ul>
+    <p class="class">
+       <a name="VM_accessors"></a>5.3.2.2 VM Accessors
+    </p>
+    <p>
+         VMA is a set of classes that are tied to the VM but remain
+         portable because they can be implemented via the
+         conventional JNI with certain functionality emulations. An
+         optimized version can use VM-specific support functions in
+         order to achieve better performance. The VM accessors
+         include the following:
+   </p>
+      <ul>
+         <li>
+            <code><a name="ObjectAccessor"></a>ObjectAccessor</code>
+            provides managed code with reflection-like functionality,
+            which complements the reflection API by enabling: 
+            <ul>
+               <li>
+                  Invocation of methods and constructors, and field
+                  read and write operations without security checks
+               
+               <li>
+                  Allocation of objects without calling the
+                  constructor
+               
+               <li>
+                  Writing into constant fields
+               
+            </ul>
+         
+         <li>
+            <a name="ArrayAccessor"></a>
+            <code>ArrayAccessor</code> allows manipulating garbage
+            collection for array types, and provides access to array
+            elements by-passing the bounds checking
+         
+         <li>
+            <code>ThreadStackAccessor</code> provides extended
+            information about the current stack trace.
+         
+      </ul>
+      <p>
+         The security model for the accessor packages is based on the
+         assumption that each accessor class instance is unique in
+         the VM and can only be obtained with the help of the
+         <code>AccessorFactory</code> class.
+      </p>
+    <p class="class">
+       5.3.2.3 Security Model
+    </p>
+    <p>
+         Platform and VM accessors can be used by the Java<a href=
+        "#*">*</a> class libraries, and not by other managed code,
+         such as application or applet code executed by the VM. This
+         model is enforced by the accessor factory, which provides
+         references to the accessors. Once the managed code gets a
+         reference to an accessor instance, it can work with that
+         instance without any further security checks, which improves
+         performance.
+   </p>
+      <p>
+         The accessor factory forbids using accessors for applets and
+         discourages applications as strongly as possible. You can
+         use the following techniques of implementing the security
+         check in the accessor factory:
+      </p>
+      <ol>
+         <li>
+            When returning an <code>Accessor</code> reference,
+            <code>AccessorFactory.getXXXAccessor()</code>, check that
+            the class trying to obtain the reference has been loaded
+            by a boot class loader. This is sufficient for applets,
+            but is easily changed by applications by adding the
+            classes to <code>boot.class.path</code> in command-line
+            Java<a href="#*">*</a> arguments.
+         
+         <li>
+            Check that the class trying to obtain the reference is on
+            the white-list of classes allowed to use accessors. This
+            is more difficult to override, but it can be done by
+            replacing the classes from the class libraries with the
+            user's versions.
+         
+         <li>
+            Add a checksum-based verification to make sure that the
+            classes have not been replaced.
+         
+      </ol>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="VM_core"></a>5.3.3 VM Core
+      </h3>
+      <p>
+         The VM core is the central part of overall VM design. The VM
+         core includes all standard VM components: the class loader,
+         the verifier, the TI and JNI frameworks, the exception
+         handling, and stack walking components. To interact with
+         these, the core virtual machine exposes a number of
+         interfaces.
+      </p>
+    <p class="class">
+       5.3.3.1 Exported interfaces
+    </p>
+    <ul>
+         <li>
+            <code>VM Generic</code> provides interface access to
+            object layout and class layout to enable operations with
+            classes, fields, and methods.
+         
+         <li>
+            <code>VM_EE Compile time</code> provides compile-time
+            interfaces to the execution engine, such as exception
+            handler registration, management of EE-specific code and
+            data storage for methods.
+         
+         <li>
+            <code>VM_EE Runtime</code> provides run-time interfaces
+            to the execution engine, such as root set enumeration,
+            managing safe suspension points, binary code patching,
+            and event subscription and handling.
+         
+         <li>
+            <code>VM Helpers</code> is used by the managed code to
+            perform tasks, which involve access to VM-specific data,
+            such as object allocation, getting virtual tables for
+            given class, and acquiring a lock. Calls to the VM helper
+            implementations are inserted by the JIT during
+            compilation. Calls are made from the VM via the
+            <code>VM_EE Compile time</code> interface. For details,
+            see section <a href="#Helpers_description">5.3.3.2 VM helpers</a>.
+         
+         <li>
+            <code>VM_GC</code> includes basic interfaces required by
+            the garbage collector, for such operations as root set
+            enumeration request and object finalization.
+         
+         <li>
+            <code>VM_TM</code> provides an interface for the object
+            layout, so that a memory chunk in the object can be used
+            by the thread manager for synchronization purposes and
+            for allocation of TM-specific data in the
+            <code>java.lang.Thread</code> object.
+         
+         <li>
+            <code>C VM</code> interface supports the Java<a href=
+           "#*">*</a> class library natives, which do not follow the
+            OPEN component management and extensibility models. This
+            JNI-like interface acts as a gateway between the Java<a
+            href="#*">*</a> class library natives and other
+            components, and supports pluggability of class library
+            components. The interface is defined in a form, which
+            does not comply with OPEN, to be compatible with
+            third-party class libraries.
+         
+         <li>
+            <code>JNI</code> provides standard <a href="#jni">JNI</a>
+            support used by native libraries, and includes the
+            invocation API.
+         
+         <li>
+            <code>JVMTI</code> supports the debug, analysis and
+            extension <a href="#jvmti_ref">tool interfaces</a>.
+         
+         <li>
+            <code>Kernel classes</code> interface ports the class
+            libraries to the virtual machine. This interface provides
+            all VM-dependent functionality declared in the Java<a
+            href="#*">*</a> Class Libraries APIs, and specific methods
+            and fields required for the VM operation. This implements
+            the interdependence between the Java<a href="#*">*</a>
+            classes and the VM data structures.
+         
+   </ul>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+    <p class="class">
+       <a name="Helpers_description"></a>5.3.3.2 VM Helpers
+    </p>
+    <p>
+         The VM helpers are functions that JIT-compiled code calls
+         during its execution to access VM-specific data. The JIT
+         queries the VM for the addresses of the VM helpers and
+         injects the proper entry point for a given helper during
+         code generation. The VM helpers are responsible for:
+   </p>
+      <ul>
+         <li>
+            Object and array allocation
+         
+         <li>
+            Entering and exiting monitors
+         
+         <li>
+            Exception throwing
+         
+         <li>
+            Fast character array copying
+         
+         <li>
+            Arithmetic operations, for example, 64-bit divide
+            operation or converting float to double
+         
+         <li>
+            Class initialization
+         
+         <li>
+            Type manipulation: casting, determining type relationship
+         
+      </ul>
+      <p>
+         The VM helpers can be provided in one of two forms:
+      </p>
+      <ul>
+         <li>
+            <i>Code sequence</i>. VM helper is represented in a
+            non-executable form, which requires prior translation by
+            the JIT and facilitates in-lining of helper code into
+            JIT-compiled code of a managed method.
+         
+         <li>
+            <i>Direct call</i>. VM helper is represented as an
+            executable code, an address of the executable piece of
+            code (stub), which eventually transfers control to the
+            native VM helper implementation.
+         
+      </ul>
+      <p>
+         The VM core allows plugging in third-party run-time helpers
+         used by third-party execution engines without extending the
+         OPEN standard. All run-time helpers must be provided at
+         least in the direct-call form. Support for in-lining of
+         run-time helpers comprises the following aspects:
+      </p>
+      <ul>
+         <li>
+            Interfaces, which enable OPEN components to expose their
+            run-time support functionality to managed code, as
+            described in the OPEN interface specification
+         
+         <li>
+            Representation describing run-time helpers, which
+            facilitates in-lining for JIT compilers; this aspect is
+            not covered by the OPEN specification to enable using
+            various helper representations
+         
+      </ul>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Thread_manager"></a>5.3.4 Thread Manager
+      </h3>
+      <p>
+         The thread manager supports threading inside the virtual
+         machine and the class libraries. The purpose of the thread
+         manager is to adopt the OS threading functions to the
+         managed run-time environment and to hide the underlying
+         platform specifics from the other VM components. The
+         implementation of thread management uses the
+         <i>black-box</i> approach, which exposes two interfaces:
+      </p>
+      <ul>
+         <li>
+            <i><a name="Java_layer"></a>Java<a href="#*">*</a>
+            layer</i> manipulates the Java<a href="#*">*</a> threads,
+            that is, the threads accessible from the Java<a href=
+           "#*">*</a> class libraries code or JVMTI.
+         
+         <li>
+            <i><a name="Native_layer"></a>Native layer</i>
+            manipulates internal VM threads not intended to be
+            visible for Java<a href="#*">*</a> code or JVMTI.
+         
+      </ul>
+      <p>
+         The thread manager is based on a subset of the Apache
+         Portable Run-time (<a href="#apr">APR</a>) layer accessed
+         through the <a href="#OS_portability_layer">OS Portability
+         layer</a> component. The threading subsystem used by the
+         OPEN components consists of three layers: the portability
+         layer at the bottom, native threading layer in the middle
+         and the Java<a href="#*">*</a> layer on top, as shown in
+         Figure 2.
+      </p>
+      <p style="text-align: center">
+         <img src="images/thread_blackbox.gif" alt=
+         "Thread Management Structure" border="0">
+      </p>
+      <p class="special">
+         Figure 2: Structure of the Thread Management Subsystem
+      </p>
+      <p>
+         The Java<a href="#*">*</a> and native threading layers make
+         up the thread manager black-box component. The bottom layer
+         is platform-dependent and is responsible for porting the
+         thread manager on a variety of platforms.
+      </p>
+      <p>
+         The Java<a href="#*">*</a> layer of the thread manager does
+         the following:
+      </p>
+      <ul>
+         <li>
+            Provides mapping between Java<a href="#*">*</a> and native
+            threads
+         
+         <li>
+            Supports kernel classes
+         
+         <li>
+            Supports the JVM tool interface
+         
+      </ul>
+      <p>
+         The native layer of the thread manager does the following:
+      </p>
+      <ul>
+         <li>
+            Provides an API for native threads manipulation and
+            synchronization
+         
+         <li>
+            Provides support for safe thread suspension and
+            interruption
+         
+         <li>
+            Wraps the portability layer to prevent direct OS
+            threading calls
+         
+         <li>
+            Complements the portability layer
+         
+      </ul>
+      <p>
+         The thread manager functionality is used by various
+         components, such as the kernel classes and the garbage
+         collector. These components interact with different parts of
+         the thread manager: with Java<a href="#*">*</a> threads and
+         objects or with the middle layer of native threading. When
+         the component operates with the Java<a href="#*">*</a>
+         objects and threads, it calls the top Java<a href="#*">*</a>
+         interface functions. Otherwise, it calls the middle native
+         interface functions.
+      </p>
+      <p>
+         The OS portability layer is platform-dependent and is
+         responsible for porting the thread manager on a variety of
+         platforms with minimal effort. You can also plug in
+         commercial threading libraries, but make the library
+         compliant with the APR threading interfaces first.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+    <p class="class">
+       5.3.4.1 Exported interfaces
+    </p>
+    <p>
+         Thread manager exposes the Java<a href="#*">*</a> and native
+         interfaces providing several groups of functions.
+   </p>
+      <p class="special">
+         Table: Thread Manager Functionality Groups
+      </p>
+      <table border="1">
+         <tr>
+            <td colspan="3" class="TableHeading">
+               Java<a href="#*">*</a> interface
+            </td>
+         </tr>
+         <tr>
+            <td class="TableHeading">
+               Header files
+            </td>
+            <td class="TableHeading">
+               Used by
+            </td>
+            <td class="TableHeading">
+               Functions
+            </td>
+         </tr>
+         <tr>
+            <td valign="top"  class="TableCell">
+               <p><code>thread_generic.h, thread_ti.h</code> </p>
+            </td>
+            <td  class="TableCell" valign="top">
+               <p>
+                  Classes: <code>java.lang.Object</code> ,
+                  <code>java.lang.Thread</code>, JVMTI
+                  <code>java.util.concurrent</code>,
+                  <code>java.lang.management</code>
+               </p>
+            </td>
+            <td class="TableCell">
+               <ul>
+                  <li>
+                     Basic Java<a href="#*">*</a> threads
+                     manipulation, for example, <code>create</code>
+                     and <code>join</code>
+                  
+                  <li>
+                     Thread identification
+                  
+                  <li>
+                     Top to middle interface pointer conversion
+                  
+                  <li>
+                     Thread attributes access
+                  
+                  <li>
+                     Interruption
+                  
+                  <li>
+                     Monitors
+                  
+                  <li>
+                     Parking
+                  
+                  <li>
+                     Suspension
+                  
+                  <li>
+                     Thread Instrumentation
+                  
+                  <li>
+                     Local storage access
+                  
+                  <li>
+                     Monitor information
+                  
+                  <li>
+                     CPU timing information
+                  
+                  <li>
+                     Peak count information
+                  
+                  <li>
+                     JVMTI Raw monitors
+                  
+               </ul>
+            </td>
+         </tr>
+         <tr>
+            <td colspan="3" class="TableHeading">
+               Native interface
+            </td>
+         </tr>
+         <tr>
+            <td valign="top"  class="TableCell">
+             <p>  <code>thread_native.h</code> </p>
+            </td>
+            <td class="TableCell" valign="top">
+              
+                  Garbage Collector,<br>
+                  The <code>java.util.concurrent</code> classes
+          
+            </td>
+            <td class="TableCell">
+               <ul>
+                  <li>
+                     Basic native threads manipulation
+                  
+                  <li>
+                     Thread groups support
+                  
+                  <li>
+                     Thread attributes access
+                  
+                  <li>
+                     State query
+                  
+                  <li>
+                     Safe suspension support
+                  
+                  <li>
+                     Interruption support
+                  
+                  <li>
+                     Parking
+                  
+                  <li>
+                     Thread local storage access
+                  
+                  <li>
+                     Conditional variable
+                  
+                  <li>
+                     Mutex
+                  
+                  <li>
+                     Read and write lock
+                  
+                  <li>
+                     Countdown latch
+                  
+                  <li>
+                     Thread iterator
+                  
+                  <li>
+                     Thread manager data lock
+                  
+               </ul>
+            </td>
+         </tr>
+      </table>
+      <p>
+         One of the key features of the OPEN thread manager is the
+         safe thread suspension functionality. The purpose of the <a
+         href="#TM.SUS">safe suspension mechanism</a> is to ensure
+         that suspended thread can be safely explored by the garbage
+         collector during the enumeration of live references. Safe
+         suspension also guarantees that the suspended thread holds
+         no system-critical locks, which can be requested by other
+         components, such as the locks associated with the native
+         heap memory.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Garbage_collector"></a>5.3.5 Garbage Collector
+      </h3>
+      <p>
+         The garbage collector scans the memory, collects memory, and
+         supports the <a href="#VM_accessors">VM accessors</a> in
+         order to manipulate with Java<a href="#*">*</a> objects
+         directly within Java<a href="#*">*</a> class libraries. The
+         garbage collector performs performance effective memory
+         allocation.
+      </p>
+    <p class="class">
+       5.3.5.1 Exported interfaces
+    </p>
+    <p>
+         <code>GC Generic</code> supports object allocation, root set
+         enumeration, and write barriers, and performs miscellaneous
+         operations, such <code>force_gc(), free_memory(),</code> and
+         <code>total_memory()</code>.
+   </p>
+      <p>
+         The GC interface consists of two parts: interfaces that the
+         GC provides to the VM and the interfaces that the GC
+         requires from the VM. Below is a high-level description of
+         these APIs. Some of these APIs (such as object allocation)
+         will be in-lined by the JIT for performance reasons.
+      </p>
+      <p>
+         APIs provided by the GC:
+      </p>
+      <ul>
+         <li>
+            Support for frontier allocation
+         
+         <li>
+            Report one root to the GC (this is a callback during root
+            set enumeration)
+         
+         <li>
+            Object allocation
+         
+         <li>
+            Optional use of write barriers
+         
+         <li>
+            Thread manipulation, for example, the GC is notified when
+            a Java<a href="#*">*</a> thread is initialized or killed
+         
+         <li>
+            GC manipulation, for example, forcing garbage collection,
+            reporting the total memory, reporting diagnostic or debug
+            information
+         
+         <li>
+            Object pinning required by the Java<a href="#*">*</a>
+            Native Interface
+         
+      </ul>
+      <p>
+         APIs required by the GC:
+      </p>
+      <ul>
+         <li>
+            Iterating over active Java<a href="#*">*</a> threads, root
+            set enumeration for each thread
+         
+         <li>
+            Suspending a thread to collect the roots, resuming a
+            thread after the collection
+         
+         <li>
+            Enumerating the roots of a given thread (ultimately
+            causes a callback into the GC)
+         
+         <li>
+            Providing getters and setters to cache GC information in
+            object VTables (this is a performance optimization that
+            helps speed up the collection of unused objects)
+         
+         <li>
+            Object finalization
+         
+      </ul>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="OS_portability_layer"></a>5.3.6 OS Portability Layer
+      </h3>
+      <p>
+         The OS portability layer component provides portable
+         wrappers for OS calls to hide platform specifics from OPEN
+         components. The component complies with the <a href=
+         "#apr">Apache Portable Run-time</a> layer and provides a set
+         of additional VM-specific functions. The layer supports
+         static linking, and can also support dynamic linking.
+      </p>
+    <p class="class">
+       5.3.6.1 Exported interfaces
+    </p>
+    <p>
+         The exported interfaces of the OS portability layer are
+         responsible for the following:
+   </p>
+      <ul>
+         <li>
+            APR
+         
+         <li>
+            Handling JNI invocation calls in a platform independent
+            way
+         
+         <li>
+            Access to compiler specific native stack structure and
+            debugging information
+         
+         <li>
+            Access to system information
+         
+         <li>
+            Virtual pages support: reserve, commit, free, and change
+            attributes
+         
+         <li>
+            Flushing processor caches
+         
+         <li>
+            Dump file creation
+         
+         <li>
+            Zip support
+         
+         <li>
+            Execution context manipulation
+         
+         <li>
+            Hardware exception handling
+         
+         <li>
+            VM-specific performance optimizations in assembler
+         
+      </ul>
+      <p class="class"><a name="VM_core_component_management"></a>5.3.6.2 Component Manager 
+      </p>
+      <p>The important part of the OS portability layer is the <i>component
+         manager</i>, which enables loading and subsequent
+         initialization of VM components. During the loading stage,
+         the component manager queries the <a href= 
+         "#Component_Default_Interface">OPEN default interface</a>
+         from each loading component, and then makes this information
+         available at the initialization stage via interface queries.
+         The component manager also enables instance creation for
+         OPEN interfaces.
+      </p>
+      <p>
+         The portability layer does not include functional tables,
+         and only one instance of the layer exists.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Execution_manager"></a> 5.3.7 Execution Manager
+      </h3>
+      <p>
+         The OPEN model supports multiple pluggable execution engines
+         and profile collectors, which enables developers to
+         implement various profile-guided JIT compilation techniques.
+         The OPEN model also introduces the <i>execution manager</i>,
+         which is the central driver component responsible for
+         managing execution engines and profile collectors. The
+         execution manager (EM) is a container for profile collectors
+         and execution engines, which does the following:
+      </p>
+      <ul>
+         <li>
+            Delegates requests from the VM for compilation or
+            execution of a method to an execution engine according to
+            a predefined algorithm.
+         
+         <li>
+            Handles profile collection events from profile collectors
+            and triggers recompilation of managed methods by
+            redirecting the methods to execution engines according to
+            a predefined algorithm
+         
+      </ul>
+      <p>
+         The execution manager, execution engines and profile
+         collector interfaces can be implemented in one component or
+         in one binary library. Besides, different instances of the
+         execution engine or the profile collector are not
+         necessarily different JITs or profile collectors. For
+         example, the execution manager can use several instances of
+         the same JIT to manage re-compilation.
+      </p>
+      <p class="note">
+         Note
+      </p>
+      <p class="notetext">
+         You can plug your own execution manager to implement your
+         own recompilation scheme, but only one execution manager can
+         exist in the system.
+      </p>
+    <p class="class">
+       5.3.7.1 Exported interfaces
+    </p>
+    <ul>
+         <li>
+            <code>EM Generic</code> is the main interface of the
+            execution manager. This is the base interface defined by
+            OPEN, which exposes the following functionality: 
+            <ul>
+               <li>
+                  <code>do_method()</code>, which the VM calls to
+                  execute a method.<br>
+                  The system returns a pointer to the execution
+                  engine, which compiled the method for further use
+                  in run-time support.
+               
+               <li>
+                  Profile collector container functionality:
+                  registration, lookup, and iteration over available
+                  profile collectors.
+               
+            </ul>
+         
+         <li>
+            <code>PC Event Callback</code> is used by profile
+            collectors to notify the execution manager that a certain
+            profile collection state has been reached or that a
+            certain event has occurred.<br>
+            For example, the profile collector notifies the execution
+            manager that the method is hot or that the branch
+            misprediction rate has exceeded a certain threshold. The
+            execution manager can also obtain this information by
+            periodically polling the <code>PC Generic</code>
+            interface of the profile collector component.
+         
+   </ul>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Profile_collector"></a>5.3.8 Profile Collector
+      </h3>
+      <p>
+         The OPEN model supports multiple pluggable profile
+         collectors. The profile collector component implements a
+         particular profile collection technique. A single profile
+         collector can be used by different components, such as the
+         VM, the execution engines, the execution manager or the
+         garbage collector.
+      </p>
+      <p>
+         Examples of profiles that can be collected by the profile
+         collector include the following:
+      </p>
+      <ul>
+         <li>
+            <i>Instrumentation-based control flow graph profiles</i>:
+            edge profiles, block profiles, and path profiles<br>
+            The edge profile contains dynamically measured
+            probabilities of the control flow graph edges. These
+            profiles can be collected by using a simple
+            instrumentation technique, when edge counters are
+            inserted by an execution engine and are incremented
+            during method execution. The edge profile collector is
+            responsible for checking these counters and notifying the
+            execution manager about profile readiness. Block profiles
+            and path profiles can be implemented in a similar
+            fashion.<br>
+            Profiles of this group create recompilation events and
+            provide critical information for many profile-guided
+            optimizations performed by JITs.<br>
+            It is recommended that you standardize profile
+            information representation for specific families of
+            profile collectors. For example, the standardization of
+            edge profile representation enables multiple execution
+            engines to reuse profile collectors and profile
+            information.<br>
+            Instrumentation based profile collectors require support
+            for time based sampling, however there are schemes with a
+            real-time counters tracking, that results to increased
+            overhead of instrumented code but reduces recompilation
+            missing opportunity time.
+         
+         <li>
+            <i>Hardware-based branch profiles</i><br>
+            Hardware performance monitoring facilities of modern
+            processors enable collection of rich execution statistics
+            with less overhead than instrumentation-based profiling.
+            The information collected by these profiles is similar to
+            edge profiles collected by instrumentation but is less
+            systematic. Hardware performance monitoring does not
+            require modifications of code and time-based sampling to
+            detect profile readiness, and allows for collection of
+            additional parameters relevant for further
+            optimizations.<br>
+            Applications of these profiles are the same as for
+            instrumentation-based control flow graph profiles.
+         
+         <li>
+            <i>Hardware-based data cache-miss profiles</i><br>
+            Cache-miss profiles can be used by execution engines to
+            optimize data loads and reduce cache miss events in
+            hotspots or by garbage collectors for better placements
+            of objects. This profile can supplement hardware-based
+            branch profiles and can serve as low overhead event
+            source for phase changer recompilation. Cache-miss
+            information cannot be collected by using instrumentation
+            techniques.
+         
+      </ul>
+      <p>
+         The OPEN interface model defines the means of interaction
+         between the execution manager and profile collectors.
+      </p>
+    <p class="class">
+       5.3.8.1 Exported interfaces
+    </p>
+    <p>
+         <code>PC Generic</code> is used by the execution manager to
+         set up profile collection and to get access to collected
+         profile data. The EM can periodically poll this interface to
+         monitor profile data and act accordingly.
+   </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Execution_engine"></a>5.3.9 Execution Engine
+      </h3>
+      <p>
+         The execution engine component executes managed code or
+         prepares it for execution and includes:
+      </p>
+      <ul>
+         <li>
+            Interpreters that execute (interpret) managed code
+            directly
+         
+         <li>
+            Just-in-time compilers that compile managed code to the
+            executable machine code
+         
+      </ul>
+    <p class="class">
+       5.3.9.1 Exported Interfaces
+    </p>
+    <ul>
+         <li>
+            <code>EE_Generic</code> provides access to the generic
+            execution engine functionality, such as initialization
+            and de-initialization, parameterized execution, and
+            compilation of a specific method.
+         
+         <li>
+            <code>EE_Runtime</code> provides access to run-time
+            support execution engine functions, such as: 
+            <ul>
+               <li>
+                  garbage collection (root set enumeration)
+               
+               <li>
+                  execution stack traversal
+               
+               <li>
+                  exception propagation
+               
+               <li>
+                  monitors support for the VM in case of abrupt
+                  method completion
+               
+               <li>
+                  correct stack trace construction when dealing with
+                  JIT in-lined methods
+               
+            </ul>
+         
+         <li>
+            <code>EE_JPDA</code> supports the VM with of
+            execution-specific JPDA features, the tools interface in
+            particular. This includes: 
+            <ul>
+               <li>
+                  retrieving the mapping of Java<a href="#*">*</a>
+                  local variables to their physical locations and
+                  accessing (setting and getting) their values
+               
+               <li>
+                  mapping between bytecode and native code when the
+                  JIT is used as the execution engine
+               
+            </ul>
+            <p class="note">
+               Note
+            </p>
+            <p class="notetext">
+               The VM can use the <code>EE_Generic</code> interface
+               to provide appropriate parameters and to request the
+               JIT to compile or the interpreter to execute a managed
+               method in a specified mode. Therefore, the JVMTI event
+               generation mechanism is supported not by the
+               <code>EE_JPDA</code> interface, but by the
+               <code>EE_Generic</code> interface.
+            </p>
+         
+   </ul>
+         <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Managed_code"></a>5.3.10 Managed Code
+      </h3>
+      <p>
+         The <i>managed code</i> is derived from Java<a href=
+        "#*">*</a> code and includes the Java<a href="#*">*</a>
+         <code>.class</code> files interpreted or compiled by a
+         just-in-time or an ahead-of-time-compiler, and the resultant
+         executable binaries. In contrast, <i>unmanaged code</i>
+         includes native code not directly derived from bytecode.
+         Type-safety is not enforced on unmanaged code.
+      </p>
+      <p>
+         During the execution of managed code, it calls VM helpers to
+         perform such operations as creating a new object or checking
+         the class cast compatibility. Normally, managed code
+         interacts with the VM components via <a href= 
+         "#Helpers_description">VM helpers</a>. The VM helpers or
+         their fast paths can be in-lined into managed code and
+         become a part of managed code.
+      </p>
+
+      <h3>
+         <a name="TI suppport"></a>5.3.11 Tool Interface: Debugging and
+         Profiling Support
+      </h3>
+      <p>
+         The OPEN framework fully supports the JVM tool interface and
+         complies with the <a href="#jsr163">Java* Platform Profiling
+         Architecture</a> in implementing the debugging and profiling
+         support.
+      </p>
+      <p class="note">
+         Note
+      </p>
+      <p class="notetext">
+         Harmony JVMTI extensions of exceptional value might be
+         proposed to the JCP to become standard interfaces in the
+         JSR that defines the next generation of JVMTI.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Deployment_Model"></a>5.4 Deployment Model
+      </h2>
+      <p>
+         A managed run-time based on the OPEN specification is
+         delivered as the following set of files:
+      </p>
+      <ul>
+         <li>
+            Release version of the VM core binary executable file
+         
+         <li>
+            Release versions of components dynamically linked
+            libraries
+         
+         <li>
+            Debug version of the JVM binary executable file
+         
+         <li>
+            Debug versions of components dynamically linked libraries
+         
+         <li>
+            Resource files, such as I18N bundles
+         
+         <li>
+            Header files necessary for alternative implementation of
+            one or more OPEN components
+         
+      </ul>
+      <p>
+         OPEN components can be delivered as a part of the VM core
+         executable, that is, they can be statically linked with the
+         VM core. Specific components, such as the garbage collector,
+         can be delivered as dynamically linked libraries and can be
+         loaded by the component manager during execution. A
+         functioning OPEN-compliant virtual machine must have at
+         least the following components to be able to execute
+         applications properly:
+      </p>
+      <ul>
+         <li>
+            VM core
+         
+         <li>
+            Garbage collector
+         
+         <li>
+            Thread manager
+         
+         <li>
+            Execution manager
+         
+         <li>
+            Execution engine
+         
+      </ul>
+      <p>
+         The profile collector component is optional and its absence
+         does not prevent the managed run-time from executing
+         applications properly.
+      </p>
+      <h3>
+         <a name="OpenHeaders"></a>5.4.1 OPEN Header Files
+      </h3>
+      <p>
+         The OPEN header files are intended for developers of
+         alternative OPEN components, and are not required for
+         developers of managed run-time applications. This is why
+         OPEN and usual JVM header files, such as <code>jvm.h</code>
+         and <code>jni.h</code> are separated: OPEN headers are
+         located in the <code>include/open/</code> directory, and the
+         <code>jvm.h</code> and <code>jni.h</code> are located in the
+         <code>include</code> directory, for details, see section <a
+         href="#Directory_Structure">8.2.3 Directory Structure</a>.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Common_Data_Types"></a>5.5 Common Data Types
+      </h2>
+      <p>
+         Common data types are defined by the <a href="#jni">JNI</a>
+         and <a href="#jsr163">JVMTI</a> specifications. To pass any
+         other data, use the abstract handles and functional
+         interfaces.
+      </p>
+      <h2>
+         <a name="Object_Model"></a>5.6 Key Data Structures
+      </h2>
+      <p>
+         In addition to binaries, components, and interface pointers,
+         the system also implements and operates on entities of finer
+         granularity, for example, objects corresponding to managed
+         classes, methods and virtual method tables. Each object of
+         the type has at least the following major characteristics:
+      </p>
+      <ul>
+         <li>
+            purpose: what the object is for and how it is used
+         
+         <li>
+            defining component, for example, the VM core, or the
+            execution engine
+         
+         <li>
+            specific characteristics, for example, method name and
+            signature, code and info blocks for a method
+         
+         <li>
+            interface to work with the object
+         
+         <li>
+            life time
+         
+      </ul>
+      <p>
+         Objects of the same or different types, and components and
+         objects follow a specific mode of interaction. This section
+         defines the minimal set of object types, which can exist in
+         the system, their characteristics and mode of interaction,
+         as well as their programmatic representation in the OPEN
+         interfaces. This section establishes whether the objects are
+         opaque handles or transparent C structures, and describes
+         their interfaces. In the following sub-sections, objects
+         types are classified and described by their defining
+         component.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="VM_core_object"></a> 5.6.1 VM Core
+      </h3>
+      <p>
+         The VM core component defines a set of handles to methods.
+         These handles can be obtained as a request to the VM core or
+         can be passed as arguments when the VM core calls the method
+         of another OPEN component. Most handles are similar to the
+         reference types in the JNI specification and additionally
+         contain entities, which enable the code to reference the
+         object and hide the object structure. Compared to the JNI
+         specification reference types, the VM core handles are more
+         effective because they directly reference the internal VM
+         structures for the corresponding objects.
+      </p>
+    <p class="class">
+       5.6.1.1 VM Handles
+    </p>
+    <ul>
+         <li>
+            <code>Open_Class_Handle</code> is a reference to the
+            class structure corresponding to the
+            <code>java.lang.Class</code> object.
+         
+         <li>
+            <code>Open_Field_Handle</code> is a reference to a field
+            of a class object.
+         
+         <li>
+            <code>Open_VTable_Handle</code> is a reference to the
+            list of virtual methods belonging to a class.
+         
+         <li>
+            <code>Open_Method_Handle</code> is a reference to a
+            method of a class object.
+         
+         <li>
+            <code>Open_Class_Loader_Handle</code> is a reference to
+            the class loader structure corresponding to the
+            <code>java.lang.ClassLoader</code> object.
+         
+         <li>
+            <code>Open_Managed_Object_Handle</code> is a direct
+            reference to a Java<a href="#*">*</a> object.
+         
+         <li>
+            <code>Open_Vector_Handle</code> is a reference to a
+            Java<a href="#*">*</a> array object.
+         
+         <li>
+            <code>Open_Native_Code_Ptr</code> is a reference to the
+            executable code generated at run time.
+         
+         <li>
+            <code>Open_Stack_Frame_Context</code> is a structure with
+            a snapshot of machine registers, which enables register
+            updates: the references to the locations of saved context
+            are used instead of copies of register values.
+         
+   </ul>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Thread_manager_object"></a>5.6.2 Thread Manager
+      </h3>
+      <p class="class">
+         5.6.2.1 Thread Control Structures
+      </p>
+      <p>
+         The thread manager (TM) requires that each thread is
+         registered, or <i>attached</i>, before its functions can be
+         called. The <code>tmn_attach()</code> function attaches a
+         thread to the <a href="#Native_layer">native layer</a> of
+         the thread manager, and the <code>tmj_attach()</code>
+         function makes the thread available for the Java<a href=
+        "#*">*</a> threading operations. In other words, the thread
+         attached to the native layer of the thread manager is the
+         native thread and the thread attached to <a href=
+         "#Java_layer">Java</a><a href="#*">*</a> layer is the Java<a
+         href="#*">*</a> thread.
+      </p>
+      <p>
+         When registered with the thread manager native layer, each
+         thread obtains a control structure, which maintains all the
+         data required for the operation of the thread. A thread
+         control structure contains various thread-specific
+         information, such as thread state, attributes, references to
+         the OS-specific thread structures, synchronization aids, and
+         other. After calling the <code>tmn_attach()</code> function,
+         a component receives an opaque handle to the thread control
+         structure. The handle can later be used for miscellaneous
+         threading operations.
+      </p>
+      <p class="note">
+         Note
+      </p>
+      <p class="notetext">
+         The actual content of a thread control structure is
+         implementation-specific and is not exposed to other OPEN
+         components.
+      </p>
+      <p>
+         To become a Java<a href="#*">*</a> thread, a thread also
+         needs to be attached to the Java<a href="#*">*</a> layer of
+         the thread manager. For that, the <code>tmj_attach()</code>
+         function of the Java<a href="#*">*</a> layer associates the
+         thread with the appropriate <code>java.lang.Thread</code>
+         object.
+      </p>
+      <p class="class">
+         5.6.2.2 Thread groups
+      </p>
+      <p>
+         The thread manager enables co-existence of multiple groups
+         of threads, for example, a group of Java<a href="#*">*</a>
+         threads and GC threads not visible for Java<a href="#*">*</a>
+         applications. Each thread maintained by the thread manager
+         belongs to a specific thread group, as shown in Figure 3.
+      </p>
+      <p style="text-align: center">
+         <img alt="Thread Grouping model" border="0" src= 
+         "images/Thread_grouping.gif">
+      </p>
+      <p class="special">
+         Figure 3: Thread Grouping Model
+      </p>
+      <p>
+         The thread manager provides a set of functions for iterating
+         over the list of threads within a specific group. A specific
+         system-wide lock is used to prevent concurrent modifications
+         of the groups array and the thread lists. This lock is
+         acquired internally during thread creation, deletion and
+         iteration over the thread list.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <p class="class">
+         5.6.2.3 Synchronizers
+      </p>
+      <p>
+         The thread manager synchronizers are functional modules used
+         for thread synchronization. Certain synchronizers can have
+         internal thread manager data structures associated with
+         them, others can delegate function calls directly to the
+         appropriate synchronizers provided by the APR. A typical
+         implementation of synchronizers within the thread manager
+         can be based on two fundamental APR primitives: mutex and
+         conditional variable, as shown in Figure 4.
+      </p>
+      <p style="text-align: center">
+         <img alt="Thread Synchronizer Structure" border="0" src= 
+         "images/Thread_synchronizer.gif">
+      </p>
+      <p class="special">
+         Figure 4: Components of TM Synchronizer
+      </p>
+      <p>
+         Where:
+      </p>
+      <ul>
+         <li>
+            <i>APR conditional variable</i> and <i>APR mutex</i> are
+            basic primitives provided by the APR.
+         
+         <li>
+            <i>TM conditional variable</i> and <i>TM mutex</i> wrap
+            appropriate APR primitives by adding wait interruption
+            support and ensure that a thread enters the safe
+            suspension mode when put into a <code>wait()</code>
+            operation on the conditional variable or when the thread
+            gets blocked while acquiring a mutex.
+         
+         <li>
+            <i>Thin monitor</i> is inflatable lock coupled with the
+            condition variable which makes the engine for Java<a
+            href="#*">*</a> monitors,
+         
+         <li>
+            <i>Semaphore</i> is the same as a POSIX semaphore, and
+            also enables specifying the count limit.
+         
+         <li>
+            <i>Java<a href="#*">*</a> monitor</i> is the same as
+            <code>java.lang.Object</code>.
+         
+         <li>
+            <i>JVMTI</i> raw monitors are the monitors defined in the
+            JVMTI specification.
+         
+         <li>
+            <code>Park</code> and <code>Unpark</code> are the lock
+            support primitives used in the
+            <code>java.util.concurrent</code> package.
+         
+      </ul>
+      <p>
+         The hierarchy demonstrated by Figure 4 is provided as an
+         example and is optimized for APR code reuse. Other
+         implementations of the Thread Manager component are free to
+         choose a different hierarchy scheme and APR primitives to be
+         based on. Note that thread manager does not expose any of
+         the internal structures of synchronizers to the external
+         components. All synchronizers are referenced by means of
+         opaque handles, similarly to thread control structures.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <p class="class">
+         5.6.2.4 Monitors
+      </p>
+      <p>
+         In Java, every object must hold a lock, and the lock must be
+         highly space-optimized. To address this problem, the thread
+         manager provides the <i>thin monitor</i> in addition to the
+         conventional mutex and conditional variable. The thin
+         monitor holds a special type of lock optimized for space
+         consumption and single-threaded usage. An example of
+         inflatable monitor implementation is a thin-fat lock
+         technique, which works as follows:
+      </p>
+      <ul>
+         <li>
+            In the absence of thread contention, lock data is stored
+            in a few bytes so that the lock can be allocated directly
+            within Java<a href="#*">*</a> object.
+         
+         <li>
+            Whenever contention takes place, the bytes allocated for
+            lock data become holding a reference to a fat lock, which
+            can be conventional mutex.
+         
+      </ul>
+      <p>
+         OPEN components use thin monitors to save memory when the
+         thread contention is not expected to be high, and the
+         conventional mutex and conditional variables are used to
+         achieve better scalability in case of high contention.
+      </p>
+      <p>
+         Java<a href="#*">*</a> monitors in the thread manager are
+         built on top of thin monitors. This way, Java<a href=
+        "#*">*</a> monitors enable space efficiency of thin monitors
+         by allocating the lock structure for these monitors directly
+         in the Java<a href="#*">*</a> objects. You can apply
+         additional space compaction or other optimization technique
+         to thin monitors in your implementation.
+      </p>
+
+      <h3>
+         <a name="Execution_engine_object"></a> 5.6.3 Execution Engine
+      </h3>
+      <p>
+         The execution engine object model defined by the OPEN
+         interface specification is completely represented as OPEN
+         components and interfaces. Extended execution engine
+         interfaces are free to introduce new objects described as
+         OPEN components and interfaces or accessed via handles.
+         Execution engines intensively use the VM object model
+         represented as handles to internal class, method, and field
+         structures, as well as other entities.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h1>
+         <a name="Communication_scenarios"></a> 6. Major Inter-component
+         Communication Scenarios
+      </h1>
+      <h2>
+         <a name="About_Scenarios"></a>6.1 About Communication Scenarios
+      </h2>
+      <p>
+         This section describes the dynamic behavior of an
+         OPEN-conformant run-time environment and contains most key
+         scenarios of communication between the OPEN components. You
+         can use the scenarios as use-cases for low-level design of
+         OPEN interfaces, as guidelines for component implementers,
+         and as additional examples for better understanding of the
+         OPEN design.
+      </p>
+      <p>
+         All scenarios are labeled with a hierarchical mnemonic code,
+         which is used for identification of supplementary files and
+         other additional material. Most scenarios are described by
+         both textual explanation and UML diagrams.
+      </p>
+      <p class="special">
+         Table: Mnemonic Code in Scenario Names
+      </p>
+      <table width="100%">
+         <tr>
+            <td class="TableHeading">
+               Code
+            </td>
+            <td class="TableHeading">
+               Scenario Name
+            </td>
+            <td class="TableHeading">
+               Code
+            </td>
+            <td class="TableHeading">
+               Scenario Name
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <b>BC</b> 
+            </td>
+            <td class="TableCell">
+               <b><a href="#Basic_communication">Basic
+               inter-component communication</a></b> 
+            </td>
+            <td class="TableCell">
+               <b>ME</b> 
+            </td>
+            <td class="TableCell">
+               <b><a href="#Method_Execution">Method
+               execution</a></b> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               BC.CLD
+            </td>
+            <td class="TableCell">
+               Component loading
+            </td>
+            <td class="TableCell">
+               ME.EM
+            </td>
+            <td class="TableCell">
+               VM and execution manager interaction
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               BC.INIT
+            </td>
+            <td class="TableCell">
+               VM Instance creation
+            </td>
+            <td class="TableCell">
+               ME.JIT
+            </td>
+            <td class="TableCell">
+               Compilation by the JIT compiler
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               BC.CI
+            </td>
+            <td class="TableCell">
+               Component instantiation and interface query
+            </td>
+            <td class="TableCell">
+               ME.PGR
+            </td>
+            <td class="TableCell">
+               Profile-guided recompilation by JIT
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <b>EX</b> 
+            </td>
+            <td class="TableCell">
+               <b><a href="#Exception_handling">Exception
+               handling</a></b> 
+            </td>
+            <td class="TableCell">
+               <b>SF</b> 
+            </td>
+            <td class="TableCell">
+               <b><a href="#Stack_Unwinding">Stack unwinding</a></b> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               EX.THR.JIT
+            </td>
+            <td class="TableCell">
+               Exception throwing from a compiled frame
+            </td>
+            <td class="TableCell">
+               SF.JIT.INL
+            </td>
+            <td class="TableCell">
+               Unwinding of a compiled frame
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               EX.THR.UNM
+            </td>
+            <td class="TableCell">
+               Exception throwing from an unmanaged frame
+            </td>
+            <td class="TableCell">
+               SF.JIT.INL
+            </td>
+            <td class="TableCell">
+               Unwinding of an in-lined compiled frame
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               EX.HND
+            </td>
+            <td class="TableCell">
+               Exception handling
+            </td>
+            <td class="TableCell">
+               <b>TM</b> 
+            </td>
+            <td class="TableCell">
+               <b><a href="#Thread_Management">Thread
+               management</a></b> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <b>MM</b> 
+            </td>
+            <td class="TableCell">
+               <b><a href="#Memory_Management">Memory management for
+               managed code and garbage collection</a></b> 
+            </td>
+            <td class="TableCell">
+               TM.NEW
+            </td>
+            <td class="TableCell">
+               Thread creation
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.INIT
+            </td>
+            <td class="TableCell">
+               Garbage collector handshaking and initialization
+            </td>
+            <td class="TableCell">
+               TM.END
+            </td>
+            <td class="TableCell">
+               Thread completion
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.SHUT
+            </td>
+            <td class="TableCell">
+               Garbage collector shutdown
+            </td>
+            <td class="TableCell">
+               TM.SUS.ALL
+            </td>
+            <td class="TableCell">
+               Stop-the-world thread suspension
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.CLSS
+            </td>
+            <td class="TableCell">
+               Class preparation
+            </td>
+            <td class="TableCell">
+               TM.SUS
+            </td>
+            <td class="TableCell">
+               Thread suspension
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.THR
+            </td>
+            <td class="TableCell">
+               Java<a href="#*">*</a> thread initialization and
+               termination
+            </td>
+            <td class="TableCell">
+               TM.LCK
+            </td>
+            <td class="TableCell">
+               Thread locking
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.RSE
+            </td>
+            <td class="TableCell">
+               Thread suspension and root-set enumeration in a
+               stop-the-world garbage collection
+            </td>
+            <td class="TableCell">
+               TM.LCK.MON
+            </td>
+            <td class="TableCell">
+               Conventional locking through monitors
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.RSE.JIT
+            </td>
+            <td class="TableCell">
+               Root set enumeration for a compiled frame
+            </td>
+            <td class="TableCell">
+               <b>A</b> 
+            </td>
+            <td class="TableCell">
+               <b><a href="#Accessors">Accessors</a></b> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.STW
+            </td>
+            <td class="TableCell">
+               Basic stop-the-world garbage collection
+            </td>
+            <td class="TableCell">
+               A.NM
+            </td>
+            <td class="TableCell">
+               Access to native memory
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.WB
+            </td>
+            <td class="TableCell">
+               Write barriers
+            </td>
+            <td class="TableCell">
+               A.AL
+            </td>
+            <td class="TableCell">
+               Array locking
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.RB
+            </td>
+            <td class="TableCell">
+               Read barriers
+            </td>
+            <td class="TableCell">
+               A.OS
+            </td>
+            <td class="TableCell">
+               Object accessor and serialization
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.FIN
+            </td>
+            <td class="TableCell">
+               Object finalization during garbage collection
+            </td>
+            <td class="TableCell">
+               <b>PM</b> 
+            </td>
+            <td class="TableCell">
+               <b><a href="#Profile_management">Profile
+               management</a></b> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               MM.GC.CONC
+            </td>
+            <td class="TableCell">
+               Individual thread control for fully concurrent GC
+            </td>
+            <td class="TableCell">
+               PM.PC.B
+            </td>
+            <td class="TableCell">
+               Basic interaction between the execution manager and
+               profile collector
+            </td>
+         </tr>
+      </table>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Basic_communication"></a> 6.2 BC. Basic Inter-component
+         Communication
+      </h2>
+      <p>
+         A high-level overview of basic inter-component communication
+         scenarios is in the <a href="#Component_Structure">Component
+         Structure</a> section, and the scenarios focus on dynamic
+         aspects of component lookup, loading, instantiation, and
+         other functionality invariant to JVM specifics.
+      </p>
+      <h3>
+         <a name="BC.INIT"></a>6.2.1 BC.INIT. VM Instance Creation
+      </h3>
+      <p>
+         This scenario describes how an OPEN-conformant system
+         complies with the JNI invocation API during the VM instance
+         creation process. Figure 5 displays the dependencies of the
+         components involved.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt="Initializing the VM Starter" src= 
+         "images/VM_init_Components.jpg">
+      </p>
+      <p class="special">
+         Figure 5: VM Starter
+      </p>
+      <p>
+         Figure 6 illustrates the VM instance creation process, which
+         complies with the JNI invocation API in the way the VM
+         requester communicates with the global JNI invocation
+         support component. Note that component libraries lookup
+         process is not defined by the OPEN framework and is an
+         implementation-specific feature.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt="Creating VM Instance" src= 
+         "images/VM_init_VM_instance_creation.jpg">
+      </p>
+      <p class="special">
+         Figure 6: VM Instance Creation
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="BC.CLD"></a>6.2.2 BC.CLD. Component Loading
+      </h3>
+      <p>
+         This scenario describes how the component manager of an
+         OPEN-conformant system loads components and interacts with
+         the binaries implementing them as shown in Figure 7.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt=
+         "Initializing the Component Manager sequence" src= 
+         "images/VM_init_Component_Manager_initialization.jpg">
+      </p>
+      <p class="special">
+         Figure 7: Component Loading
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="BC.CI"></a>6.2.3 BC.CI. Component Instantiation and
+         Interface Query
+      </h3>
+      <p>
+         This scenario describes how the system creates component
+         instances and the interfaces it provides for the client
+         code, as shown in Figure 8.
+      </p>
+      <p style="text-align: center">
+         <img alt="Cration Component Instances" border="0" src= 
+         "images/VM_init_Component_interface_query.jpg">
+      </p>
+      <p class="special">
+         Figure 8: Component Instance Creation
+      </p>
+      <h2>
+         <a name="Method_Execution"></a>6.3 ME. Method Execution
+      </h2>
+      <p>
+         This section contains scenarios describing compilation and
+         execution of managed code.
+      </p>
+      <h3>
+         <a name="ME.EM"></a>6.3.1 ME.EM. Interaction between the VM and
+         the Execution Manager
+      </h3>
+      <p>
+         As mentioned in section <a href="#Execution_manager">5.3.7 Execution
+         Manager</a>, this component is responsible for
+         distributing requests for compilation (in case of JIT
+         compiler) and execution (in case of interpreter) among
+         execution engines. This component also manages the
+         recompilation process. The generic sequence of handling a
+         method is the following:
+      </p>
+      <ol start="1" type="1">
+         <li>
+            VM calls the <code>do_method()</code> method of the
+            execution manager.
+         
+         <li>
+            Execution manager (EM) selects the execution engine (EE)
+            to compile or execute the method or tries several
+            execution engines until the request is handled
+            successfully.
+         
+         <li>
+            EM returns a pointer to the interface of the EE, which
+            handled the method for further use in run-time support.
+         
+      </ol>
+      <p>
+         The VM can suggest that the method is handled by a specific
+         EE during the recompilation requested by the execution
+         manager (see the <a href="#ME.PGR">ME.PGR</a> scenario).
+         However, the execution manager actually selects the engine
+         for execution.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="ME.JIT"></a>6.3.2 ME.JIT. Compilation by JIT
+      </h3>
+      <p>
+         To compile a method on the first attempt to execute it, an
+         OPEN-conformant VM uses <i>trampolines</i>, or
+         <i>compile-me</i> stubs. In this model, the object VTable
+         and the call sites store the address of the compile-me stub
+         for the method until this method is executed. The execution
+         goes in several stages as shown in Figure 9.
+      </p>
+      <ol>
+         <li>
+            When called, the compile-me stub performs the transition
+            from managed to native code and calls the VM interface
+            responsible for organization of the compilation process.
+         
+         <li>
+            VM calls <code>do_method()</code> in the execution
+            manager interface.
+         
+         <li>
+            Execution manager handles the request, as described in the
+            <a href="#ME.EM">ME.EM</a> scenario.
+         
+         <li>
+            When the method is compiled, all call sites and virtual
+            table entries are updated and the stub transfers control
+            to the compiled code.
+         
+      </ol>
+      <p style="text-align: center">
+         <img alt=
+         "Procedure of compiling a method by a just-in-time compiler"
+         border="0" src="images/ME.JIT.gif">
+      </p>
+      <p class="special">
+         Figure 9: Compilation by JIT
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="ME.PGR"></a>6.3.3 ME.PGR. Profile-guided Recompilation by
+         JIT
+      </h3>
+      <p>
+         The execution manager serves as a container and a driver for
+         the profile collectors. Irrespective of the organization of
+         the profile collection process, the following sequence of
+         events occurs when the profile is ready:
+      </p>
+      <ul type="disc">
+         <li>
+            Profile collector sends the
+            <code>on_method_profile_ready</code> event to the
+            execution manager.
+         
+         <li>
+            Execution manager triggers the recompilation by calling
+            the <code>recompile_method()</code> VM method and passes
+            the interface pointer to the execution engine used for
+            recompilation
+         
+         <li>
+            VM does the following: 
+            <ul>
+               <li>
+                  Immediately performs the recompilation of the
+                  method,
+               
+               <li>
+                  And/or adjusts the compile-me stubs so that methods
+                  are compiled with the new recompiling engine later.
+           </ul>   </ul>
+      <p>
+         Figure 10 demonstrates the recompilation procedure.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt=
+         "Dynamic recompilation of a method by a JIT compiler" src= 
+         "images/ME.PGR.gif">
+      </p>
+      <p class="special">
+         Figure 10: Recompilation by JIT
+      </p>
+      <p>
+         For details of the compilation process, see the <a href= 
+         "#ME.JIT">ME.JIT</a> scenario.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Profile_management"></a>6.4 PM. Profile Management and
+         DPGO Scenarios
+      </h2>
+      <p>
+         This section contains scenarios describing how execution
+         engines and other components instantiate profile collectors,
+         establish dynamic profiling sessions, access profile
+         information, and perform operations related to the dynamic
+         profile-guided optimizations (DPGO).
+      </p>
+      <h3>
+         <a name="PMPCB"></a>6.4.1 PM.PC.B Basic Interaction between the Execution Manager and
+         the Profiler Collector
+      </h3>
+      <p>
+         The interaction between the execution manager and the
+         profile collectors can follow one of the suggested models:
+      </p>
+      <ul>
+         <li>
+            Execution manager creates profile collectors via the
+            component manager and determines the mode of interaction
+            with them.
+         
+         <li>
+            Execution engines and other components register profile
+            collectors in the execution manager by using the
+            <code>register_profile_collector()</code> function.
+         
+         <li>
+            Execution manager, execution engines, and profile
+            collectors are tightly linked and implemented in one
+            binary.
+         
+      </ul>
+      <p>
+         Irrespective of the profile collection technique (time or
+         event-based sampling), the profile collectors notify the
+         execution manager about the profile readiness by using the
+         <code>on_method_profile_ready</code> event, with the event
+         callback implemented by the execution manager.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Stack_Unwinding"></a>6.5 SF. Stack Unwinding
+      </h2>
+      <p>
+         This section contains scenarios describing the run-time
+         stack iteration, which serves as the basis for stack-related
+         APIs, such as exception throwing and root set enumeration.
+      </p>
+      <h3>
+         <a name="SF.JIT"></a>6.5.1 SF.JIT. Unwinding of a Compiled Frame
+      </h3>
+      <p>
+         Unwinding of compiled managed frames is the basic technique
+         used by the VM for all stack iteration and destructive stack
+         unwinding applications, which is illustrated by Figure 11.
+         For each managed frame the VM calls the
+         <code>unwind_stack_frame()</code>JIT method, which updates
+         <code>Open_Stack_Frame_Context</code>, as follows:
+      </p>
+      <ul>
+         <li>
+            VM passes the following information to the JIT: 
+            <ul>
+               <li>
+                  <code>Open_Stack_Frame_Context</code> value
+                  corresponding to the stack state for the callee
+                  stack frame, if any
+               
+               <li>
+                  native instruction pointer of the call site or of
+                  another instruction, from which the stack unwinding
+                  is to be done
+               
+               <li>
+                  <code>Method_Handle</code> for the method; the
+                  stack will be unwound to the frame of this method
+               
+            </ul>
+         
+         <li>
+            JIT de-serializes the run-time support information, that
+            is the description of the stack layout, collected and
+            serialized during compilation, and updates the value for
+            <code>Open_Stack_Frame_Context.</code>
+         
+         <li>
+            System performs the procedure for each stack frame.
+         
+         <li>
+            When transferring control to an exception handler, the VM
+            calls the JIT method
+            <code>fix_exception_handler_context()</code>to update the
+            stack pointer as expected on the entry to the exception
+            handler. This step is only performed when an exception is
+            handled.
+         
+      </ul>
+      <p class="note">
+         Note
+      </p>
+      <p class="notetext">
+         In presence of inlined methods, the unwinding technique is a
+         bit different, as described in the <a href=
+         "#SF.JIT.INL">SF.JIT.INL</a> scenario.
+      </p>
+      <p style="text-align: center">
+         <img alt="Unwinding the Thread Stacke" border="0" src= 
+         "images/SF.JIT.gif">
+      </p>
+      <p class="special">
+         Figure 11: Unwinding the Stack
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="SF.JIT.INL"></a>6.5.2 SF.JIT.INL. Unwinding of In-lined
+         Compiled Frame
+      </h3>
+      <p>
+         The following example illustrates the Java<a href="#*">*</a>
+         stack iteration process for inlined methods.
+      </p>
+<pre>
+void foo()
+{
+ inlined_method_1();
+}
+void inlined_method_1()
+{
+ inlined_method_2();
+}
+void inlined_method_2()
+{
+ bar();
+}
+void bar()
+{
+ ...
+}
+</pre>
+      <p>
+         In this example, <code>inlined_method_1()</code> and
+         <code>inlined_method_2()</code> are inlined and the
+         <code>bar()</code> method is called from <code>foo,</code>
+         as shown in Figure 12.
+      </p>
+      <p>
+         For each call site, the JIT can collect information about
+         the stack of inlined methods. For that, the VM does the
+         following before unwinding the real stack frame:
+      </p>
+      <ul>
+         <li>
+            Queries the JIT about the number of methods inlined at
+            the native instruction pointer, from which the unwinding
+            is to be done; to do this, the VM calls the
+            <code>get_inline_depth()</code> JIT method, which returns
+            the depth of the stack of inlined methods.
+         
+         <li>
+            VM iterates through the Java<a href="#*">*</a> frames of
+            inlined methods from 0 to the value returned by the
+            <code>get_inline_depth()</code> function, and calls
+            <code>get_inlined_method()</code> for each frame.
+         
+         <li>
+            After all inlined methods are iterated, the VM performs
+            unwinding as described in the <a href=
+            "#SF.JIT">SF.JIT</a> scenario.
+         
+      </ul>
+      <p style="text-align: center">
+         <img border="0" alt=
+         "Procedure of unwinding a Stack with In-lined Frames" src= 
+         "images/SF.JIT.INL.gif">
+      </p>
+      <p class="special">
+         Figure 12: Unwinding an In-lined Compiled Frame
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Exception_handling"></a> 6.6 EX. Exception Handling
+      </h2>
+      <p>
+         This section contains scenarios, which describe how
+         exceptions are thrown and handled in both managed and
+         unmanaged code.
+      </p>
+      <h3>
+         <a name="EX.THR.JIT"></a>6.6.1 EX.THR.JIT. Exception Throwing from
+         a Compiled Frame
+      </h3>
+      <p>
+         This scenario describes how an exception is thrown from a
+         compiled frame. The procedure includes several stages as
+         shown in Figure 13.
+      </p>
+      <p>
+         Stage 1: Creating a helper at method compilation time:
+      </p>
+      <ol>
+         <li>
+            During the compilation of a method, the execution engine
+            uses the VM EE run-time support interface to query the
+            address of the exception helper.
+         
+         <li>
+            VM generates the exception helper code.
+         
+         <li>
+            VM returns the code address of the exception helper.
+         
+         <li>
+            Execution engine generates the call instruction to the
+            helper address and includes it into the compiled code.
+         
+         <li>
+            Execution engine registers the code regions corresponding
+            to the try locks and addresses of the exceptions with the
+            VM.
+         
+      </ol>
+      <p>
+         Stage 2: During compiled method execution:
+      </p>
+      <ol>
+         <li>
+            To throw the exception, the compiled code invokes the
+            helper generated by the VM at compile time.
+         
+         <li>
+            Helper calls the VM interface function to throw the
+            exception. The helper is required because the VM
+            interface function may have different calling conventions
+            from methods compiled by the execution engine.
+         
+         <li>
+            VM receives the exception object, finds the matching
+            handler (see the <a href="#EX.HND">Exception Handling</a>
+            scenario), and transfers control to the handler.
+         
+         <li>
+            If the VM cannot find the matching handler, it returns
+            control to the code that started the Java<a href=
+           "#*">*</a> method by returning from
+            <code>do_method()</code>.
+         
+      </ol>
+      <p style="text-align: center">
+         <img border="0" alt=
+         "Exception Thrown from a Compiled Frame Scenario" src= 
+         "images/EX.THR.JIT.gif">
+      </p>
+      <p class="special">
+         Figure 13: Throwing an Exception from a Compiled Frame
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="EX.THR.UNM"></a>6.6.2 EX.THR.UNM. Exception Throwing from
+         an Unmanaged Frame
+      </h3>
+      <p>
+         This scenario describes how an exception is thrown from a
+         JNI native code, as shown in Figure 14.
+      </p>
+      <p>
+         After a JNI native method returns, the caller of the method
+         does the following:
+      </p>
+      <ol>
+         <li>
+            Checks, whether an exception has occurs that matches the
+            JNI function <code>ExceptionOccurred()</code>.
+         
+         <li>
+            If yes, re-throws the exception as described in the <a
+            href="#EX.THR.JIT">EX.THR.JIT</a> scenario.
+         
+      </ol>
+      <p style="text-align: center">
+         <img border="0" alt=
+         "Throwing an Exception from a Native Frame" src= 
+         "images/EX.THR.UNM.gif">
+      </p>
+      <p class="special">
+         Figure 14: Throwing an Exception from an Unmanaged Frame
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="EX.HND"></a>6.6.3 EX.HND. Exception Handling
+      </h3>
+      <p>
+         This scenario and Figure 15 describe how an exception is
+         handled.
+      </p>
+      <ol>
+         <li>
+            VM calls the execution engine to compile a method with
+            the try-and-catch block for a specific type of exception.
+         
+         <li>
+            When the exception handler is compiled, the entry point
+            of the resulting managed code corresponding to the catch
+            block is registered with the VM core as the exception
+            handler for the specified type of exception and for the
+            range of addresses corresponding to the try block.
+         
+      </ol>
+      <p>
+         When an exception is thrown, the VM core transfers control
+         to the matching handler, as described in the <a href= 
+         "#EX.THR.JIT">EX.THR.JIT</a> scenario.
+      </p>
+      <p style="text-align: center">
+         <img alt=
+         "Exception Handling Procedure: Choosing Catching Mode"
+         border="0" src="images/EX.HND.gif">
+      </p>
+      <p class="special">
+         Figure 15: Handling Exceptions
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Thread_Management"></a> 6.7 TM. Thread Management
+      </h2>
+      <p>
+         This section contains various scenarios of thread
+         manipulation.
+      </p>
+      <h3>
+         <a name="TM.NEW"></a>6.7.1 TM.NEW. Java<a href="#*">*</a> Thread
+         Creation
+      </h3>
+      <p>
+         The Java<a href="#*">*</a> thread creation procedure consists
+         of the following stages:
+      </p>
+      <ol>
+         <li>
+            The user code calls the
+            <code>java.lang.Thread.start()</code> method in the
+            kernel classes within the VM core component.
+         
+         <li>
+            The <code>java.lang.Thread.start()</code> method
+            delegates the call to the <code>tm_thread_create()</code>
+            method of the thread manager and supplies
+            <code>thread_proc1</code> as a pointer to the function
+            wrapping the <code>Thead.run()</code> method call.
+         
+         <li>
+            The <code>tm_thread_create()</code> method calls the
+            <code>port_thread_create()</code> method of the OS
+            Portability layer. This method actually starts the new
+            native thread. As an argument, this function has a
+            pointer to the <code>thread_proc2</code> function that
+            wraps the thread body.
+         
+         <li>
+            The newly created thread starts executing the
+            <code>thread_proc2</code> wrapping function, which, in
+            its turn, attaches a new thread to the thread manager
+            native layer and then attaches the threads to the Java<a
+            href="#*">*</a> layer.
+         
+         <li>
+            While attaching the thread to the Java<a href="#*">*</a>
+            layer, the thread manager obtains a pointer to
+            TM-specific data from the <code>java.lang.Thread</code>
+            object to associate the native thread and the
+            <code>java.lang.Thread</code> object.
+         
+         <li>
+            Then the thread manager runs the actual thread body by
+            calling the <code>thread_proc1()</code> wrapping function
+            which does an actual call to <code>Thread.run()</code>
+            method
+         
+      </ol>
+      <p>
+         Figure 16 illustrates the detailed sequence of thread
+         creation.
+      </p>
+      <p style="text-align: center">
+         <img alt="Creating a Thread: Various Components Involved"
+         border="0" src="images/TM.NEW.gif">
+      </p>
+      <p class="special">
+         Figure 16: Thread Creation
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="TM.END"></a>6.7.2 TM.END. Thread Completion
+      </h3>
+      <p>
+         The thread completion procedure is linked with the thread
+         creation procedure. During thread completion, the thread
+         that called the <code>thread_proc1()</code> wrapping
+         procedure is active (see the <a href="#TM.NEW">thread
+         creation</a> scenario). The wrapping procedure contains the
+         <code>Thead.run()</code> method and the code that removes
+         the thread from the appropriate thread group after the
+         <code>run()</code> method is completed. Then the
+         <code>thread_proc1()</code> function returns, and the thread
+         manager calls the <code>port_thread_exit()</code> function
+         of the OS Portability layer, which does the actual thread
+         completion, as shown on Figure 17.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt="Completing a Thread" src= 
+         "images/TM.END.gif">
+      </p>
+      <p class="special">
+         Figure 17: Thread Completion
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="TM.SUS"></a>6.7.3 TM.SUS. Thread Suspension
+      </h3>
+      <p>
+         The purpose of the safe suspension mechanism is to ensure
+         that the suspended thread can be safely explored by the
+         garbage collector during the enumeration of live references,
+         and to guarantee that the suspended thread holds no
+         system-critical locks, which can be requested by the other
+         parts of the VM, such as the locks associated with the
+         native heap memory. The algorithm of safe suspension
+         describes the protocol of communication between thread T1
+         and thread T2, which is used by T1 to safely suspend thread
+         T2. The T1 thread calls the <code>tmn_suspend(T2)</code>
+         function to suspend thread T2. The procedure goes in the
+         following stages:
+      </p>
+      <ol>
+         <li>
+            The <code>tmn_suspend(T2)</code> function sets a flag for
+            the T2 thread indicating a request for suspension.
+         
+         <li>
+            Depending on the current state of thread T2, the
+            <code>tmn_suspend(T2)</code> function activates one of
+            the following mechanisms: 
+            <ol type="a">
+               <li>
+                  If thread T2 is currently running in a safe code
+                  region, then the <code>tmn_suspend(T2)</code> call
+                  immediately returns.
+               
+               <li>
+                  If thread T2 is currently in an unsafe region, then
+                  the <code>tmn_suspend()</code>method blocks until
+                  the thread T2 reaches the beginning of a safe
+                  region or a safe point.
+               
+            </ol>
+         
+         <li>
+            Thread T2 runs to the end of the safe region and blocks
+            until T1 resumes it by calling
+            <code>tmn_resume(T2)</code>.
+         
+      </ol>
+      <p>
+         The T2 thread undergoes the following:
+      </p>
+      <ol>
+         <li>
+            Thread T2 periodically calls the
+            <code>tmn_safe_piont()</code> method to designate the
+            points of safe suspension.<br>
+             If a suspension request has been set previously for T2,
+            then this method notifies the T1 thread and then waits
+            until T1 resumes it by calling the
+            <code>tmn_resume(T2)</code>.
+         
+         <li>
+            When the T2 thread enters a safe region, it calls the
+            <code>tmn_suspend_enable()</code> function, which sets
+            the <code>safe_region</code> state flag to
+            <code>true</code>.<br>
+             If a suspension request has been previously set for T2,
+            T1 is notified about T2 reaching a safe region.
+         
+         <li>
+            When T2 leaves a safe region, it calls the
+            <code>tmn_suspend_enable()</code> function. This function
+            sets the <code>safe_region</code> state flag to false and
+            then invokes the <code>thread_safe_point()</code>method.
+         
+      </ol>
+      <p>
+         The safe suspension scenario is typically applied when the
+         garbage collector suspends a Java<a href="#*">*</a> thread to
+         enumerate live references. Figure 18 illustrates the case
+         when the GC component is using the thread manager in order
+         to suspend a Java<a href="#*">*</a> thread while it is
+         running in the safe code region.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt="Suspending a Thread in a Safe Region"
+         src="images/safe_region.gif">
+      </p>
+      <p class="special">
+         Figure 18: Suspension: Safe Region
+      </p>
+      <p>
+         Consider the safe thread suspension as if each thread had a
+         lock associated with it. Thread T2 releases the lock when
+         entering a safe region, and acquires the lock when leaving
+         it. In order to suspend thread T2, it is necessary to
+         acquire the lock associated with it. Resuming thread T2 is
+         equivalent to the releasing the lock associated with it. A
+         straight-forward implementation of the safe suspension
+         algorithm reserves a single-thread optimized lock (that is,
+         the thin monitor) for each thread and uses it for suspending
+         and resuming that thread.
+      </p>
+      <p>
+         This scenario is also applied when a GC thread hits a Java<a
+         href="#*">*</a> thread while it is in an unsafe region of
+         code, as shown in Figure 19.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt="Suspending a Thread in a Safe Point"
+         src="images/safe_point.gif">
+      </p>
+      <p class="special">
+         Figure 19: Safe Point
+      </p>
+      <p>
+         The <code>safe_point()</code> operation corresponds to the
+         <code>wait</code> operation performed on the monitor
+         associated with the thread. In this case, the
+         <code>resume()</code> operation is equivalent to notifying
+         that monitor.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="TM.SUS.ALL"></a>6.7.4 TM.SUS.ALL. Stop-the-world Thread
+         Suspension
+      </h3>
+      <p>
+         The stop-the-world thread suspension happens when the
+         garbage collector needs to enumerate the live object
+         references for all threads. Figure 20 illustrates the case
+         when only one GC thread is running and two Java<a href=
+        "#*">*</a> threads need to be suspended.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt="Stop-the-world Thread Suspension" src= 
+         "images/suspend_all.gif">
+      </p>
+      <p class="special">
+         Figure 20: Suspending All Threads
+      </p>
+      <p>
+         First, the GC calls the <code>suspend_all()</code> function
+         of the thread manager and instructs this component to
+         suspend every thread running within the given group (in this
+         scenario, all Java<a href="#*">*</a> threads). The thread
+         manager returns the iterator for traversing the list of
+         suspended threads. The GC uses this iterator to analyze each
+         Java<a href="#*">*</a> thread with respect to live references
+         and then does a garbage collection. After the collection is
+         completed, the GC instructs the thread manager to resume all
+         suspended threads.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="TM.LCK"></a>6.7.5 TM.LCK. Thread Locking
+      </h3>
+      <p>
+         The thread manager does the locking by using the mutex or
+         the thin monitor. The mutex is preferable in case of high
+         contention, while the monitors are better optimized for
+         space. This section describes the scenario when the VM core
+         attempts to lock a resource from threads T1 and T2. The
+         major stages of the process of locking and unlocking are
+         shown in Figure 21.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt="Locking a Thread" src= 
+         "images/locking.gif">
+      </p>
+      <p class="special">
+         Figure 21: Locking with a Fat Lock
+      </p>
+      <p>
+         Initially, the mutex is not occupied, that is, the label
+         lock is set to zero. Thread T1 calls the
+         <code>mutex_lock()</code> function, which instructs the
+         thread manager to mark the mutex as locked by T1. T2 can
+         also call the <code>mutex_lock()</code> later, and if it
+         happens to call on a lock already occupied, then T2 is put
+         into the internal waiting queue associated with the mutex
+         and blocks until T1 unlocks the mutex. The T1 thread calls
+         <code>mutex_unlock()</code> to release the mutex, which
+         enables the mutex to extract T2 from the queue, to transfer
+         the lock ownership to this thread, and then to notify T2
+         that it can wake up.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="TM.LCK.MON"></a>6.7.6 TM.LCK.MON. Conventional Locking
+         through Monitors
+      </h3>
+      <p>
+         Locking Java<a href="#*">*</a> monitors implies interaction
+         between the thread manager and VM core because the thread
+         manager must have the memory address within the Java<a href= 
+        "#*">*</a> object where the lock data is stored. The process
+         of locking Java<a href="#*">*</a> monitors is shown on the
+         Figure 22.
+      </p>
+      <p style="text-align: center">
+         <img border="0" alt="Locking a Thread by using Monitors"
+         src="images/locking_through_monitors.gif">
+      </p>
+      <p class="special">
+         Figure 22: Locking Java<a href="#*">*</a> Monitors
+      </p>
+      <p>
+         When the synchronized section occurs in Java<a href=
+        "#*">*</a> code, the following steps are taken:
+      </p>
+      <ul>
+         <li>
+            VM core calls the <code>monitor_enter()</code> function
+            of the thread manager and passes the Java<a href=
+           "#*">*</a> object as an argument.
+         
+         <li>
+            Thread manager calls the <code>get_lockword_addr()</code>
+            method on VM core component to get the physical address
+            within the Java<a href="#*">*</a> object where the lock
+            structure is kept.
+         
+         <li>
+            The thread manager calls the
+            <code>thin_monitor_lock()</code> function to acquire the
+            lock associated with this object.
+         
+      </ul>
+      <p>
+         At the end of the synchronized block, the
+         <code>monitor_exit()</code> function is called, which is
+         analogous to the <code>monitor_enter(</code>) function.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Memory_Management"></a>6.8 MM. Memory Management
+      </h2>
+      <p>
+         This section contains all scenarios related to memory
+         management for managed code that are related to garbage
+         collection and object lifecycle management.
+      </p>
+      <h3>
+         <a name="MM.GC.INIT"></a>6.8.1 MM.GC.INIT. Garbage Collector
+         Handshaking and Initialization
+      </h3>
+      <p>
+         At startup, the virtual machine can query the following
+         properties to find out whether the GC supports or requires
+         specific features:
+      </p>
+      <ul>
+         <li>
+            <code>gc.requires_write_barrier</code> indicates, whether
+            the GC requires a write barrier to be executed on each
+            heap pointer write operation.
+         
+         <li>
+            <code>gc.requires_read_barrier</code> specifies, whether
+            the GC requires a read barrier to be executed on each
+            heap pointer read operation.
+         
+         <li>
+            <code>gc.supports_frontier_allocation</code> provides
+            information on GC support for fast thread-local
+            allocation.
+         
+         <li>
+            <code>gc.frontier.current_offset</code> and
+            <code>gc.frontier.limit_offset</code> return the offsets
+            of the thread-local pool pointers.
+         
+         <li>
+            <code>gc.compresses_references</code> shows, whether the
+            GC compresses the VTable and heap pointers.
+         
+      </ul>
+      <p>
+         The virtual machine creates the managed heap and initializes
+         the garbage collector by calling the GC function
+         <code>gc_init()</code>. At this point, the VM initialization
+         sequence is not yet complete and the VM is not ready to do
+         garbage collection.
+      </p>
+      <p>
+         The virtual machine indicates the end of its initialization
+         sequence by calling the GC function
+         <code>gc_vm_initialized()</code>. This indicates that the VM
+         is ready for garbage collection. This procedure is
+         illustrated in Figure 23.
+      </p>
+      <p>
+         At the VM shutdown, the virtual machine notifies the GC
+         about shutdown by calling the function
+         <code>gc_wrapup()</code>.
+      </p>
+      <p style="text-align: center">
+         <img alt="VM Starting the Garbage Collector" src= 
+         "images/MM.GC.INIT.gif" border="0">
+      </p>
+      <p class="special">
+         Figure 23: Initializing the Garbage Collector
+      </p>
+      <h3>
+         <a name="MM.GC.SHUT"></a>6.8.2 MM.GC.SHUT Garbage Collector
+         Shutdown
+      </h3>
+      <p>
+         The VM notifies the garbage collector that the Java<a href=
+        "#*">*</a> heap is not needed any longer by calling the
+         function <code>gc_wrapup()</code>.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="MM.GC.CLSS"></a>6.8.3 MM.GC.CLSS. Class Preparation
+      </h3>
+      <p class="MsoNormal">
+         The VM notifies the GC about new classes loaded and prepared
+         by calling the function <code>gc_class_prepared()</code>, as
+         shown in Figure 24.
+      </p>
+      <p style="text-align: center">
+         <img alt=
+         "Preparation of a Class via the Garbage Collection Interface"
+          src="images/MM.GC.CLSS.gif" border="0">
+      </p>
+      <p class="special">
+         Figure 24: Preparing a Class
+      </p>
+      <h3>
+         <a name="MM.GC.THR"></a>6.8.4 MM.GC.THR. Java<a href="#*">*</a>
+         Thread Initialization and Termination
+      </h3>
+      <p>
+         The VM notifies the GC about new Java<a href="#*">*</a>
+         thread creation events by calling the function
+         <code>gc_thread_init()</code>. Just before the Java<a href=
+        "#*">*</a> thread terminated, the VM calls the function
+         <code>gc_thread_kill()</code>, as shown in Figure 25.
+      </p>
+      <p style="text-align: center">
+         <img alt="Initializing and Completing a Thread in the GC"
+         src="images/MM.GC.THR.gif" border="0">
+      </p>
+      <p class="special">
+         Figure 25: Thread Life Cycle
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="MM.GC.RSE"></a> 6.8.5 MM.GC.RSE. Thread Suspension and
+         Root set Enumeration
+      </h3>
+      <p>
+         The Java<a href="#*">*</a> thread, which determines that
+         garbage collection is needed, tries to become the <i>GC
+         controlling thread</i> by obtaining the global GC lock. The
+         garbage collector uses the VM function
+         <code>vm_gc_lock_enum()</code> to obtain the global GC lock.
+         If the lock is obtained successfully, and the collection is
+         still necessary, then the garbage collector suspends all
+         Java<a href="#*">*</a> threads by calling the VM function
+         <code>vm_enumerate_root_set_all_threads()</code>. The same
+         function call commands the VM to start root set enumeration.
+      </p>
+      <p>
+         The VM enumerates the root set by calling the GC functions
+         <code>gc_add_root_set_entry()</code>,
+         <code>gc_add_compressed_root_set_entry()</code> and others.
+         The function
+         <code>vm_enumerate_root_set_all_threads()</code> does not
+         return until the root set enumeration is complete. After the
+         completion of
+         <code>vm_enumerate_root_set_all_threads()</code>, all Java<a
+         href="#*">*</a> threads are suspended, and the root set is
+         completely enumerated, as follows.
+      </p>
+      <p style="text-align: center">
+         <img alt=
+         "GC Enumerating the Live Rerefences across all Threads" src= 
+         "images/MM.GC.RSE.gif" border="0">
+      </p>
+      <p class="special">
+         Figure 26: Root Set Enumeration and Threading
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="MM.GC.RSE.JIT"></a>6.8.6 MM.GC.RSE.JIT. Root Set
+         Enumeration for a Compiled Frame
+      </h3>
+      <p>
+         The virtual machine delegates the enumeration of compiled
+         frames to the JIT compiler, which compiled the method
+         running on a stack frame. The stack frame is identified by
+         the <code>Open_Stack_Frame_Context</code> structure, which
+         contains pointers to a snapshot of the machine registers, as
+         follows.
+      </p>
+      <ol>
+         <li>
+            The virtual machine calls the JIT compiler to enumerate a
+            stack frame by calling the function
+            <code>get_root_set_from_stack_frame()</code>.
+         
+         <li>
+            The JIT compiler calls the GC function
+            <code>gc_add_root_set_entry()</code> and several others
+            to report the root pointers, contained in a stack frame.
+         
+         <li>
+            When the JIT compiler finished enumeration of a stack
+            frame, the JIT returns control to the VM, and then the VM
+            advances the <code>JitFrameContext</code> structure to
+            the next stack frame by calling the JIT function
+            <code>unwind_stack_frame()</code>.
+         
+         <li>
+            The VM analyses the instruction pointer value from the
+            <code>JitFrameContext</code> structure to establish the
+            owner of the next stack frame. If the
+            <code>JitFrameContext</code> points to a managed frame,
+            the process is repeated.
+         
+      </ol>
+      <p style="text-align: center">
+         <img alt="Enumerating References in a Compiled Frame" src= 
+         "images/MM.GC.RSE.JIT.gif" border="0">
+      </p>
+      <p class="special">
+         Figure 27: Enumerating a Compiled Frame
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="MM.GC.STW"></a>6.8.7 MM.GC.STW. Basic Stop-the-World
+         Garbage Collection
+      </h3>
+      <p>
+         The stop-the-world collection algorithm is supported by the
+         following function call sequence:
+      </p>
+      <ol>
+         <li>
+            VM explicitly requests garbage collection by calling the
+            GC function <code>gc_force_gc()</code> or tries to
+            allocate an object by calling the function
+            <code>gc_alloc()</code> when the heap is exhausted.
+         
+         <li>
+            GC tries to obtain a global GC lock by calling the
+            function <code>vm_gc_lock_enum()</code>. A Java<a href=
+           "#*">*</a> thread that managed to obtain the global GC
+            lock first becomes <i>GC controlling thread</i>.
+         
+         <li>
+            GC requests the thread suspension and root set
+            enumeration by calling the function
+            <code>vm_enumerate_root_set_all_threads()</code>.
+         
+         <li>
+            VM enumerates the root set by repeatedly calling the GC
+            function <code>gc_add_root_set_entry()</code>,
+            <code>gc_add_compressed_root_set_entry()</code> and
+            several others.
+         
+         <li>
+            VM signals the end of root set enumeration by returning
+            from the function
+            <code>vm_enumerate_root_set_all_threads().</code>
+         
+         <li>
+            GC proceeds to trace the heap and reclaim unreachable
+            objects.
+         
+         <li>
+            GC resumes the Java<a href="#*">*</a> threads by calling
+            the VM function <code>vm_resume_threads_after()</code>
+            and completes stop-the-world phase.
+         
+         <li>
+            GC releases the global GC lock by calling the VM function
+            <code>vm_gc_unlock_enum().</code>
+         
+         <li>
+            GC retries to complete the memory allocation request if
+            collection was triggered by <code>gc_alloc()</code> and
+            repeats the garbage collection if necessary. If the
+            memory allocation is not possible, an out-of-memory
+            condition is reported by returning 0.
+         
+      </ol>
+      <p>
+         This stop-the-world garbage collection sequence is
+         illustrated in Figure 28.
+      </p>
+      <p style="text-align: center">
+         <img alt=
+         "Stopping All Threading when Forcing the Garbage Collection"
+         src="images/MM.GC.STW.gif" border="0">
+      </p>
+      <p class="special">
+         Figure 28: Stop-the-world Garbage Collection
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="MM.GC.WB"></a>6.8.8 MM.GC.WB. Write Barriers
+      </h3>
+      <p>
+         The virtual machine code or the managed code inform the GC
+         about the heap pointer write operations by calling the GC
+         function <code>gc_write_barrier()</code>. This function has
+         three arguments at maximum:
+      </p>
+      <ul>
+         <li>
+            Base address of the object being written to
+         
+         <li>
+            Offset of the field in the object or the absolute address
+            of the written field
+         
+         <li>
+            Value being written
+         
+      </ul>
+      <p>
+         The necessity to call this function is negotiated during the
+         handshaking phase at VM startup time: the VM and the
+         execution engine query the property
+         <code>gc.requires_write_barrier</code> to find out if the
+         function <code>gc_write_barrier()</code> must to be called
+         on each heap pointer write operation. If the GC requires
+         write barriers, the write operation is replaced by the call
+         to the <code>gc_write_barrier()</code> function.
+      </p>
+      <h3>
+         <a name="MM.GC.RB"></a>6.8.9 MM.GC.RB. Read Barriers
+      </h3>
+      <p>
+         The virtual machine code or managed code inform the GC about
+         heap pointer read operations by calling the GC function
+         <code>gc_read_barrier()</code>. This function receives the
+         address of the heap location being read, and returns the
+         read value. The garbage collector can use this function to
+         keep the heap consistent for the Java<a href="#*">*</a>
+         threads, when they copy objects concurrently with the
+         execution of a Java<a href="#*">*</a> application.
+      </p>
+      <p>
+         The need to call this function is negotiated during the
+         handshaking phase at VM startup time: the VM and the EE
+         query the property <code>gc.requires_read_barrier</code> to
+         find out if the function <code>gc_read_barrier()</code> must
+         be called on each heap pointer read operation.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="MM.GC.FIN"></a>6.8.10 MM.GC.FIN. Object Finalization
+         during Garbage Collection
+      </h3>
+      <p>
+         The garbage collector identifies objects that require
+         finalization during allocation by calling the VM function
+         <code>class_is_finalizable()</code>. In case the allocated
+         object is finalizable, the pointer is registered in the
+         finalizable objects queue.
+      </p>
+      <p>
+         Then during the collection, the garbage collector detects
+         that the object can no longer be reached, removes the object
+         pointer from the finalizable queue, and moves it to the
+         separate queue of objects eligible for finalization. The GC
+         transfers the list of eligible objects to the VM by
+         repeatedly calling the function
+         <code>vm_finalize_object()</code>. The virtual machine
+         stores the object pointers and performs the finalization
+         later by following the implementation-specific algorithm, as
+         shown in Figure 29.
+      </p>
+      <p>
+         The garbage collector handles reference objects similarly to
+         finalizable objects, and transfers the list of reference
+         objects ready to be enqueued by repeatedly calling the VM
+         function <code>vm_enqueue_reference()</code>.
+      </p>
+      <p style="text-align: center">
+         <img alt="Finalizing an Object" src="images/MM.GC.FIN.gif"
+         border="0">
+      </p>
+      <p class="special">
+         Figure 29: Finalizing an Object
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="MM.GC.CONC"></a>6.8.11 MM.GC.CONC. Individual Thread
+         Control for Fully Concurrent GC
+      </h3>
+      <p>
+         The garbage collector asks the VM to iterate over the list
+         of existing Java<a href="#*">*</a> threads by calling the
+         function <code>vm_iterate_threads()</code>. The global
+         thread lock prevents thread creation and termination while
+         <code>vm_iterate_threads()</code> is running. The VM
+         iterates through live Java<a href="#*">*</a> threads by
+         calling the GC function <code>gc_iterate_thread()</code>.
+         The garbage collector can save the thread handle or suspend
+         the thread and enumerate it while holding the global thread
+         lock. In case the GC does not enumerate the thread
+         immediately, the thread may terminate at any time.
+      </p>
+      <p>
+         The GC suspends an individual thread by calling the VM
+         function <code>vm_suspend_thread()</code> and passing the
+         thread handle obtained during thread iteration to the
+         virtual machine. The VM responds by calling the GC function
+         <code>gc_thread_suspended()</code>. The thread remains
+         suspended until the function
+         <code>gc_thread_suspended()</code> returns. The GC requests
+         the root set enumeration for the suspended thread by calling
+         the VM function <code>vm_enumerate_thread()</code>. In
+         response, the VM and the execution engine enumerate the
+         thread root set using the regular functions
+         <code>gc_add_root_set_entry()</code> and others.
+      </p>
+      <p style="text-align: center">
+         <img alt="Concurrent Threads Running" src= 
+         "images/MM.GC.CONC.gif" border="0">
+      </p>
+      <p class="special">
+         Figure 30: Thread Control
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Accessor_interfaces"></a> 6.9 A. Accessors
+      </h2>
+      <p>
+         <a href="#Accessors">Accessors</a> are constructs of higher
+         level compared to the VM components and do not interact with
+         them directly. Accessors have Java<a href="#*">*</a>
+         interfaces and interact primarily with the managed code of
+         Java<a href="#*">*</a> class libraries. Therefore, the
+         accessor-related operations described in the subsequent
+         sections are usage scenarios rather than inter-component
+         communication scenarios.
+      </p>
+      <h3>
+         <a name="A.NM"></a>6.9.1 A.NM Access to Native Memory
+      </h3>
+      <p>
+         The <code>java.nio</code> package defines the buffer
+         classes, which are used throughout the native input and output
+         (NIO) APIs. Buffers can be <i>direct</i> or
+         <i>non-direct</i>. Given a direct buffer, the system
+         performs native I/O operations directly without copying the
+         buffer content from the native to the Java<a href="#*">*</a>
+         layer, Java<a href="#*">*</a> arrays. A direct byte buffer is
+         created by using the <code>allocateDirect()</code> factory
+         method, which is often mapped directly to the system or the C
+         library allocation methods, such as <code>malloc()</code>
+         and <code>VirtualAlloc()</code>.
+      </p>
+      <p>
+         Direct access is provided by using native methods, which
+         increases the overall cost of accessing such data from the
+         Java<a href="#*">*</a> layer. The memory accessor mechanism
+         encapsulates all required operations on the native heap, and
+         provides room for future optimizations by using in-lining or
+         other JIT techniques. The <code>MemoryAccessor</code>
+         interface includes the following function groups:
+      </p>
+      <ul>
+         <li>
+            Memory allocation and de-allocation: <code>malloc,
+            realloc, free</code>
+         
+         <li>
+            Operations over primitive types: <code>getByte,
+            getDouble,setBoolean</code>
+         
+         <li>
+            Operations over arrays of primitive types:
+            <code>getChar(char[] buf,..)</code>
+         
+         <li>
+            Search operations: <code>findFirstDiff,
+            findFirstDiffReorder</code>
+         
+      </ul>
+      <p>
+         The memory accessor interface enables handling different
+         native byte orders with methods ending with
+         <code>Reorder</code>, for instance
+         <code>getDoubleReorder</code>.
+      </p>
+      <p>
+         Each memory region allocated by using
+         <code>MemoryAccessor</code> has the address returned to the
+         Java<a href="#*">*</a> layer as the <code>jlong</code> value.
+      </p>
+      <p class="class">
+         Example</p>
+      <p>
+         This example illustrates allocating a memory region and
+         setting and getting double value.
+      </p>
+<pre>
+public static final int BUF_SIZE = 32; 
+
+
+public void testMemAcc() { 
+  double a, b = 0.1212; 
+  long addr;
+  // Get Memory Accessor from the factory. 
+  MemoryAccessor mem = AccessorFactory.getMemoryAccessor();
+  // Allocate array of size = BUF_SIZE 
+ addr = mem.malloc(BUF_SIZE); 
+  // Set value pointed by address "addr" with the double value b 
+ mem.setDouble(addr, b); 
+  // Get the value from the native buffer. 
+  a = mem.getDouble(addr);&gt;
+if(a == b)<br>
+ 
+System.out.println("OK"); 
+  else 
+System.out.println(a + " != " + b); 
+  mem.free(addr); 
+} } 
+</pre>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <p class="class">
+         Example</p>
+      <p>
+         The following example illustrates the implementation of
+         parts of <code>java.nio.ByteBufferDirectImpl</code> by using
+         the memory accessor.
+      </p>
+<pre>
+class ByteBufferDirectImpl extends MappedByteBuffer
+  implements Cleanable, ByteBufferDirect { 
+
+  private static MemoryAccessor mem = AccessorFactory.getMemoryAccessor();
+  private static ArrayAccessor ala = AccessorFactory.getArrayAccessor(); 
+  protected transient long addr = 0;
+  protected transient long addrOffset = 0;
+
+
+  ByteBufferDirectImpl(int capacity) {
+super(capacity);
+if (capacity &gt; 0) {
+isAddrOurs = true;
+addr = mem.malloc(capacity);
+if (addr == 0) {= 0) {
+  throw new OutOfMemoryError("Could not allocate " + capacity + " bytes.");
+ }
+mem.memset(addr, (byte)0, capacity);
+ CleaningManager.getManager().addCleanable(this);
+ }
+  }
+...
+// getting and setting data from the jarray to the native buffer and vice versa
+
+  public void getByteArray(byte dst[], int offset, int length) {
+mem.getByte(addr + addrOffset + position, dst, offset, length);
+  } 
+  public void putByteArray(byte src[], int offset, int length) {
+mem.setByte(addr + addrOffset + position, src, offset, length);
+  }
+  
+  public void putByteBuffer(ByteBufferDirect src, long length) {
+mem.memcpy(addr + addrOffset + position, 
+  src.getAddr() + src.getAddrOffset() + ((ByteBuffer)src).position(),
+  length);
+  } 
+
+// finding differences in between the native buffers. 
+  public int compareTo(ByteBufferDirect src, long length) {
+return (int)mem.findFirstDiff(
+  src.getAddr() + src.getAddrOffset() + ((ByteBuffer)src).position(),
+  addr + addrOffset + position,
+  1, length, order == ByteOrder.nativeOrder());
+   } } 
+</pre>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="A.AL"></a>6.9.2 A.AL Array Locking
+      </h3>
+      <p>
+         Typically, the mechanism of array locking is used to share
+         memory between a Java<a href="#*">*</a> array and a native
+         structure. The traditional way of populating a native
+         structure with values by setting each value via a separate
+         JNI call significantly impacts performance.
+      </p>
+      <p>
+         The array accessor provides an alternative solution, where
+         an area of memory is filled with the data as a Java<a href=
+        "#*">*</a> byte array, and the pointer to the array data is
+         passed to a native function as a struct parameter. For that,
+         the array in memory is locked. Locking an array means making
+         it unmovable by the garbage collector by moving the array to
+         a specifically designated area of memory not controlled by
+         the garbage collector or by disabling the garbage collector.
+      </p>
+      <p>
+         An array can be locked for a short time to perform a short
+         task or for a longer period of time. With short-time
+         locking, the environment must work fast, but is allowed to
+         change the system state so that if the system stays in that
+         state for a long time, undesirable consequences may ensue.
+         The long-period locking has the opposite effect: the locking
+         and unlocking operations may be costly, but the array can
+         stay locked for as long as needed.
+      </p>
+      <p class="class">
+         Example</p>
+      <p>
+         In this example, a method reads the image from the native
+         memory resource into an internal array of
+         <code>BufferedImage</code>. Because it is required to
+         perform a pointer arithmetic operation on the array pointer,
+         it is impossible to pass the array directly to the
+         automatically generated native wrapper, and array locking is
+         performed outside the wrapper. Because the native function
+         is pure calculation and does not presuppose callbacks or
+         wait for parameters, short locking can be used safely.
+      </p>
+<pre>
+ArrayAccessor arrAccess = AccessorFactory.getArrayAccessor(); BufferedImage getResultingImage() {
+
+
+  int data[] = new int[width * height];
+ 
+  ...
+  // Here the array is locked for further usage from native code 
+  LockedArray la = arrAccess.lockArrayShort(data);
+  long ptr = la.getAddress(); 
+
+
+  for (int y = height - 1; y &gt;= 0; y--) {
+ // A wrapper around native library
+ gdi32.GetDIBits(memDC, memBmp, y, 1, ptr, // &lt;- passed to native
+ header.ptr, WindowsDefs.DIB_RGB_COLORS);
+ ptr += width * 4;
+  } 
+  la.release();
+
+  ...
+
+}
+</pre>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="A.OS"></a>6.9.3 A.OS Object Accessor and Serialization
+      </h3>
+      <p>
+         To restore object values from the serialized objects, stream
+         serialization code often requires access to the fields not
+         normally accessible from the Java<a href="#*">*</a>
+         perspective. Usually, this type of access is handled by
+         using the reflection API or JNI methods, which significantly
+         impacts the overall performance of serialization
+         implementation. To avoid this, the <i>object accessor</i>
+         gathers all required functionality in one place and provides
+         a generic way to directly access classes and objects from
+         within the trusted code. This way, the
+         <code>ObjectAccessor</code> enables the JIT and the VM to
+         optimize that part of the internal API.
+      </p>
+      <p>
+         The <code>ObjectAccessor</code> supports the following
+         groups of operations:
+      </p>
+      <ul>
+         <li>
+            <code>getField/MethodID, getStaticField/MethodID</code>
+            get ID for methods and fields.
+         
+         <li>
+            <code>getXXX/setXXX</code> read and write non-static
+            fields in objects ( <code>XXX</code> stands for a field
+            type).
+         
+         <li>
+            <code>getStaticXXX/setStaticXXX</code> read and write
+            static fields in classes ( <code>XXX</code> stands for a
+            field type).
+         
+         <li>
+            <code>invokeStaticXXX</code> calls static methods in a
+            given class ( <code>XXX</code> stands for return type).
+         
+         <li>
+            <code>invokeVirtualXXX</code> calls virtual methods for a
+            given object ( <code>XXX</code> stands for return type).
+         
+         <li>
+            <code>invokeNonVirtualXXX</code> calls non-virtual
+            methods for a given class and object ( <code>XXX</code>
+            stands for return type).
+         
+         <li>
+            <code>allocateObject, newInstance</code> provide control
+            over object construction.
+         
+         <li>
+            <code>hasStaticInitializer</code> provides information
+            about a given class.
+         
+         <li>
+            <code>monitorEnter/Exit</code> enter and exit monitor
+            associated with a given object.
+         
+      </ul>
+      <p>
+         Fields and methods are identified in the class with the help
+         of IDs. Depending on the platform, IDs may or may not
+         represent the real offsets in the physical memory, so you
+         must not rely on the correspondence between IDs and memory
+         address space. However, it is guaranteed that an ID once
+         obtained is valid during the whole lifetime of a given class
+         and can equally be applied for all its instances.
+      </p>
+      <p>
+         No security checks are made when reading and writing an
+         object's fields and when calling the object's methods. In
+         addition to variables, the <code>ObjectAccessor</code> class
+         also enables setting values for constant fields within an
+         object.
+      </p>
+
+      <p class="class">
+         Example</p>
+      <p>
+         The example illustrates the implementation of a part of
+         <code>java.io.ObjectStreamField</code> by using
+         <code>ObjectAccessor.</code>
+      </p>
+<pre>
+ public class ObjectStreamField implements Comparable {
+  // package visible to use from ObjectStreamClass
+  String name; 
+  //getting an ObjectAccessor instance from the Factory.
+  static ObjectAccessor dao = AccessorFactory.getObjectAccessor();<br>
+........... skipped .................. 
+
+  // setting boolean field... 
+final void setBooleanField(Object obj, boolean val)
+ throws IllegalAccessException {
+ dao.setBoolean(obj, dao.getFieldID(field), val);
+ } 
+
+  final void setByteField(Object obj, byte val) throws IllegalAccessException {
+ dao.setByte(obj, dao.getFieldID(field), val);
+ }
+
+  final void setCharField(Object obj, char val) throws 
+IllegalAccessException {
+ dao.setChar(obj, dao.getFieldID(field), val);
+ } 
+
+  final void setShortField(Object obj, short val)
+ throws IllegalAccessException {
+ dao.setShort(obj, dao.getFieldID(field), val);
+ }
+
+  final void setIntField(Object obj, int val) throws 
+IllegalAccessException {
+ dao.setInt(obj, dao.getFieldID(field), val);
+ }
+
+  final void setLongField(Object obj, long val) throws 
+IllegalAccessException {
+ dao.setLong(obj, dao.getFieldID(field), val);
+ }
+
+  final void setFloatField(Object obj, float val)
+ throws IllegalAccessException {
+ dao.setFloat(obj, dao.getFieldID(field), val);
+ }
+
+  final void setDoubleField(Object obj, double val)
+ throws IllegalAccessException {
+ dao.setDouble(obj, dao.getFieldID(field), val);
+ }
+
+  final void setObjectField(Object obj, Object val)
+ throws IllegalAccessException {
+ dao.setObject(obj, dao.getFieldID(field), val);
+}
+}</pre>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h1>
+         <a name="References"></a>7. References
+      </h1>
+      <p>
+         This section lists the resources used in this document and
+         other related documents.
+      </p>
+      <ul>
+         <li>
+            <a name="jvm"></a> Java<a href="#*">*</a> Virtual Machine
+            Specification, JSR 924 at <a href= 
+            "http://www.java.sun.com/docs/books/vmspec">http://www.java.sun.com/docs/books/vmspec/</a>
+         
+         <li>
+            <a name="jni"></a> Java<a href="#*">*</a> Native
+            Interface, <a href= 
+            "http://java.sun.com/j2se/1.4.2/docs/guide/jni/">http://java.sun.com/j2se/1.4.2/docs/guide/jni/</a>
+         
+         <li>
+            <a name="jsr163"></a> Java<a href="#*">*</a> Platform
+            Profiling Architecture, JSR 163 at <a href= 
+            "http://www.jcp.org/en/jsr/overview">http://www.jcp.org/en/jsr/overview</a>
+         
+         <li>
+            <a name="jvmti_ref"></a>Java<a href="#*">*</a> Virtual
+            Machine Tool Interface, <a href= 
+            "http://java.sun.com/j2se/1.5.0/docs/guide/jvmti/jvmti.html">
+            http://java.sun.com/j2se/1.5.0/docs/guide/jvmti/jvmti.html</a>
+         
+         <li>
+            <a name="Invoc_api_ref"></a>Java<a href="#*">*</a>
+            Invocation API Specification, <a href= 
+            "http://java.sun.com/j2se/1.5.0/docs/guide/jni/spec/invocation.html#wp9502">
+            http://java.sun.com/j2se/1.5.0/docs/guide/jni/spec/invocation.html#wp9502</a>
+         
+         <li>
+            <a name="j2se"></a> Java<a href="#*">*</a> 2 Standard
+            Edition, <a href=
+            "http://java.sun.com/j2se/1.5.0/docs/api/">http://java.sun.com/j2se/1.5.0/docs/api/</a>
+         
+         <li>
+            <a name="apr"></a>Apache Portable Run-time layer, <a
+            href="http://apr.apache.org/">http://apr.apache.org/</a>
+         
+         <li>
+            <a name="posix_ref"></a>POSIX standard in threading, <a
+            href= 
+            "http://www.opengroup.org/onlinepubs/009695399/idx/threads.html">
+            http://www.opengroup.org/onlinepubs/009695399/idx/threads.html</a>
+         
+         <li>
+           
+               <a name="thin_lock_ref"></a> David F. Bacon, Ravi
+               Konuru, Chet Murthy ,Mauricio Serrano, <i>Thin locks:
+               featherweight synchronization for Java</i>, <a href= 
+               "http://portal.acm.org/citation.cfm">http://portal.acm.org/citation.cfm</a>
+         
+         
+         <li>
+            <a name="lock_overhead_ref"></a>Takeshi Ogasawara,
+            Hideaki Komatsu, Toshio Nakatani, <i>TO-Lock: Removing
+            Lock Overhead Using the Owners' Temporal Locality</i>, <a
+            href= 
+            "http://portal.acm.org/citation.cfm?id=1025127.1026014">http://portal.acm.org/citation.cfm</a>
+         
+      </ul>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h1>
+         <a name="Appendices"></a> 8. Appendices
+      </h1>
+      <h2>
+         <a name="Component_Default_Interface"></a> 8.1 Appendix A.
+         Component Default Interface
+      </h2>
+      <p>
+         Each OPEN component implements the <i>OPEN component default
+         interface</i> to provide inter-component communication via
+         the component manager, as follows:
+      </p>
+<pre>
+ typedef struct OpenComponent_ {
+  const char* (*get_name)();
+  const char* (*get_version)();
+  const char* (*get_description)();
+  const char* (*get_vendor)();
+  const char* (*get_property)(const char*);
+
+
+  OpenInterface* (*allocate_instance) (OpenComponent *this_comp, const char *interface_name);
+
+
+  bool (*initialize_instance) (struct ComponentManager *cm, OpenComponent *this_comp, struct OpenInterface *instance);
+
+
+  /** returns NULL terminated list of names of supported interfaces. */
+  const char** (*list_VTable_names )();
+} OpenComponent_;
+</pre>
+      <p>
+         Additionally, each component exports and implements the
+         following entry point:
+      </p>
+<pre>
+DLL_EXPORT OpenComponent** library_ init();
+</pre>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+    <p class="class">
+       Function Groups</p>
+         <ul>
+         <li>
+            <code>const char* get_name()</code> returns the unique
+            name of component.
+         
+         <li>
+            <code>const char* get_version()</code> returns the
+            version of component, in the following form:<br>
+             major_number.minor_number, for example <code>1.0</code>
+         
+         <li>
+            <code>const char* get_description()</code> returns the
+            description of component in a readable form
+         
+         <li>
+            <code>const char* get_vendor()</code> returns the vendor
+            of component
+         
+         <li>
+            <code>const char* get_property(const char*)</code>
+            queries optional component properties
+         
+      </ul>
+      <p>
+         The default interface is used in the following operations:
+      </p>
+      <ul>
+         <li>
+            Instance allocation and instance initialization: 
+<pre>
+ OpenInterface* allocate_instance(OpenComponent *this_comp, const char *interface_name);
+</pre>
+            <p>
+               Returns an instance of the required interface or
+               null.<br>
+                The interface name is the full interface name,
+               including the major and minor numbers. If the minor
+               number is not equal to zero and the component
+               implements OPEN interfaces with other minor number,
+               then this function returns null.
+            </p>
+<pre>
+bool (*initialize_instance) (struct ComponentManager *cm, OpenComponent *this_comp, struct OpenInterface *instance);
+</pre>
+            <p>
+               Initializes private data, obtains required OPEN
+               interfaces from other OPEN components, and stores
+               these interfaces as private data for further use.
+            </p>
+         
+         <li>
+            Component creation: 
+<pre>
+ DLL_EXPORT OpenlComponent** library_ init();
+</pre>
+            <p>
+               Creates an array of instances of
+               <code>OpenComponent</code> terminated by null.
+            </p>
+         
+      </ul>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Interface_Layout"></a> 8.2 Appendix B. Interface Layout
+      </h2>
+      <h3>
+         <a name="Layout_Organization"></a> 8.2.1 Layout Organization
+      </h3>
+      <p>
+         Each component is deployed in the following location:
+      </p>
+<pre>
+ bin/&lt;debug_release&gt;&lt;os&gt;_&lt;arch&gt;&lt;compiler&gt;/&lt;component_name&gt;
+</pre>
+      <p>
+         Where:
+      </p>
+      <ul>
+         <li>
+            <code>&lt;debug_release&gt;</code> is the
+            <code>debug</code> or the <code>release</code> version of
+            component
+         
+         <li>
+            <code>&lt;os&gt;</code> is the deployment operating
+            system: <code>windows</code> or <code>linux</code>
+         
+         <li>
+            <code>&lt;arch&gt;</code> is the deployment processor
+            architecture: <code>ia32</code> or <code>em64t</code> or
+            <code>ipf</code> for the Itanium* processor family
+         
+         <li>
+            <code>&lt;comp&gt;</code> is the compiler:
+            <code>intel</code> or <code>gcc</code>, <code>g++</code>
+            or <code>ms</code>
+         
+      </ul>
+      <p>
+         The OPEN specification defines the following standard names,
+         and the default format of OPEN components. Each binary file
+         name has the appropriate file name extension, which is not
+         shown in the table, <code>exe</code> for platform executable
+         on Windows<a href="#*">*</a> and no extension for platform
+         executable on Linux<a href="#*">*</a>, <code>dll</code> for
+         dynamically linked library on Windows<a href="#*">*</a> and
+         <code>so</code> for dynamically linked library on Windows<a
+         href="#*">*</a>, and so on.
+      </p>
+      <table class="normalTable" border="1" cellspacing="1"
+      cellpadding="0">
+         <tr>
+            <td class="TableHeading">
+               Component
+            </td>
+            <td class="TableHeading">
+               Binary File Name
+            </td>
+            <td class="TableHeading">
+               Delivery format
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               VM core
+            </td>
+            <td class="TableCell">
+               <code>ij</code> 
+            </td>
+            <td class="TableCell">
+               Platform executable
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Thread manager
+            </td>
+            <td>
+               <code>tm</code> 
+            </td>
+            <td class="TableCell">
+               Dynamically linked library
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Garbage collector
+            </td>
+            <td class="TableCell">
+               <code>gc</code> 
+            </td>
+            <td class="TableCell">
+               Dynamically linked library
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               OS portability layer
+            </td>
+            <td class="TableCell">
+               <code>port</code> 
+            </td>
+            <td class="TableCell">
+               Statically linked with VM core
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Execution manager
+            </td>
+            <td class="TableCell">
+               <code>em</code> 
+            </td>
+            <td class="TableCell">
+               Dynamically linked library
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Execution engine
+            </td>
+            <td class="TableCell">
+               <code>ee</code> 
+            </td>
+            <td class="TableCell">
+               Dynamically linked library
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Profile collector
+            </td>
+            <td class="TableCell">
+               <code>pc</code> 
+            </td>
+            <td class="TableCell">
+               Dynamically linked library
+            </td>
+         </tr>
+      </table>
+      <p>
+         Upon component creation, the component manager tries to
+         locate the other components by following the specified
+         paths. To override the default locations of the components,
+         use the command-line arguments or property files.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Naming_Conventions"></a> 8.2.2 Naming Conventions
+      </h3>
+      <p class="class">
+         8.2.2.1 Components and Interfaces
+      </p>
+      <p>
+         The name of each OPEN interface corresponds to the <a href= 
+         "#Component_Structure">components structure,</a> and is a
+         string of the following format:
+      </p>
+<pre>
+ open.interface .&lt;prefix&gt;.&lt;interface&gt;.&lt;major number&gt;.&lt;minor number&gt;&lt;optional_string&gt;
+</pre>
+      <p>
+         For example,
+      </p>
+<pre>
+ #define OPEN_VM_EE_COMPILE_TIME "open.interface.vm.ee_compile_time.1.0"
+</pre>
+      <p class="special">
+         Table: OPEN Naming Conventions
+      </p>
+      <table cellpadding="0" width="100%">
+         <tr>
+            <td class="TableHeading">
+               Component
+            </td>
+            <td class="TableHeading">
+               Prefix
+            </td>
+            <td class="TableHeading">
+               Interfaces
+            </td>
+            <td class="TableHeading">
+               #define
+            </td>
+            <td class="TableHeading">
+               Name of Base Version
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="9" class="TableCell">
+               VM core
+            </td>
+            <td rowspan="9" class="TableCell">
+               <code>vm</code> 
+            </td>
+            <td class="TableCell">
+               <code>VM Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_VM</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.vm.generic.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>VM_EE Compile time</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_VM_EE_COMPILE_TIME</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.vm.ee_compile_time.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>VM_EE Runtime</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_VM_EE_RUNTIME</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.vm.ee_runtime.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>VM Helpers</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_VM_HELPERS</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.vm.vm_helpers.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>VM_GC</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_VM_GC</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.vm.vm_gc.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>C VM Interface</code> 
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>JNI</code> 
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>JVMTI</code> 
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>Kernel classes</code> 
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="2" class="TableCell">
+               Execution manager
+            </td>
+            <td rowspan="2" class="TableCell">
+               <code>em</code> 
+            </td>
+            <td class="TableCell">
+               <code>EM Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_EM</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.em.generic.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>PC Event Callback</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_EM_EVENT_CALLBACK</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.em.event_callback.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="3" class="TableCell">
+               Thread manager
+            </td>
+            <td rowspan="3" class="TableCell">
+               <code>thread</code> 
+            </td>
+            <td class="TableCell">
+               <code>Thread Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_THREAD</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.thread.generic.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>Locker</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_THREAD_LOCKER</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.thread.locker.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>Manipulator</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_THREAD_MANIPULATOR</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.thread.manipulator.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               VM accessors
+            </td>
+            <td class="TableCell">&nbsp;</td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Platform accessors
+            </td>
+            <td class="TableCell">&nbsp;
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Garbage collector
+            </td>
+            <td class="TableCell">
+               <code>gc</code> 
+            </td>
+            <td class="TableCell">
+               <code>GC Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_GC</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.gc.generic.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Profile collector
+            </td>
+            <td class="TableCell">
+               <code>pc</code> 
+            </td>
+            <td class="TableCell">
+               <code>PC Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_PC</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.pc.generic.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="3" class="TableCell">
+               Execution engine
+            </td>
+            <td rowspan="3" class="TableCell">
+               <code>ee</code> 
+            </td>
+            <td class="TableCell">
+               <code>EE Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_EE</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.ee.generic.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>EE Runtime</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_EE_runtime</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.ee.runtime.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>JPDA</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_EE_JPDA</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.ee.jpda.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="2" class="TableCell">
+               OS Portability Layer
+            </td>
+            <td rowspan="2" class="TableCell">
+               <code>port</code> 
+            </td>
+            <td class="TableCell">
+               <code>Generic Portlib API</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_PORT</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.port.generic.1.0</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>static</code> 
+            </td>
+            <td class="TableCell">
+               <code>OPEN_PORT_STATIC</code> 
+            </td>
+            <td class="TableCell">
+               <code>open.interface.port.static.1.0</code> 
+            </td>
+         </tr>
+      </table>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <p class="class">
+         8.2.2.2 Interface Names and Header Files
+      </p>
+      <p>
+         This example contains the code of the execution engine
+         generic interface header file.
+      </p>
+<pre>
+ /*
+* Execution engine generic interface
+*/
+typedef const struct OpenEeGeneric_ *OpenEeGeneric ;
+
+/*
+* Execution engine generic VTable
+*/
+typedef struct OpenEeGeneric_ {
+
+
+  /**
+ * Comments ...
+ */
+  NativeCode (*jit_compile_method_01) (OpenVmClassStructure*, MethodHandle method);
+
+
+  /**
+ * Comments ...
+  */
+  NativeCode (*jit_compile_method_02) (OpenEeGeneric *instance, MethodHandle method);
+
+
+  // more functions
+} OpenEeGeneric_ ;
+
+
+/*
+* Execution engine generic interface version
+*/
+#define OPEN_EE "open.interface.ee.generic.1.0"
+
+#ifdef __cplusplus
+}
+#endif
+</pre>
+      <p class="note">
+         Note</p>
+      <p class="notetext">
+         Internal interface complexity is concentrated in the OPEN
+         component default interface, and not in individual OPEN
+         interface header files.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h3>
+         <a name="Directory_Structure"></a> 8.2.3 Directory Structure
+      </h3>
+      <p>
+         The following table maps the OPEN <a href= 
+         "#Component_Structure">component structure</a> to the
+         directory structure.
+      </p>
+      <p class="special">
+         Table: Directory Structure
+      </p>
+      <table align="center" cellpadding="0">
+         <tr>
+            <td class="TableHeading">
+               Component
+            </td>
+            <td class="TableHeading">
+               Prefix
+            </td>
+            <td class="TableHeading">
+               Interfaces
+            </td>
+            <td class="TableHeading">
+               Header files
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="9" class="TableCell">
+               VM Core
+            </td>
+            <td rowspan="9">
+               <code>vm</code> 
+            </td>
+            <td class="TableCell">
+               <code>VM Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/vm.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>VM_EE Compile time</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/vm_ee.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>VM_EE Runtime</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/vm_ee_rt.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>VM Helpers</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/vm_helpers.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>VM_GC</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/vm_gc.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>C VM Interface</code> 
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>JNI</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/jni.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>JVMTI</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/jvmti.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>Kernel classes</code> 
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="2" class="TableCell">
+               Execution manager
+            </td>
+            <td rowspan="2">
+               <code>em</code> 
+            </td>
+            <td class="TableCell">
+               <code>EM Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/em.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>PC Event Callback</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/em_event_callback.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="2" class="TableCell">
+               Thread manager
+            </td>
+            <td rowspan="2">
+               <code>thread</code> 
+            </td>
+            <td class="TableCell">
+               <code>Thread Native</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/thread_native.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>Thread Java</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/thread_java.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               VM accessors
+            </td>
+            <td class="TableCell">
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Platform accessors
+            </td>
+            <td class="TableCell">
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+            <td class="TableCell">
+               N/A
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Garbage collector
+            </td>
+            <td class="TableCell">
+               <code>gc</code> 
+            </td>
+            <td class="TableCell">
+               <code>GC Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/gc.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <p>
+                  Profile collector
+               </p>
+            </td>
+            <td class="TableCell">
+               <code>pc</code> 
+            </td>
+            <td class="TableCell">
+               <code>PC Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/pc.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="3" class="TableCell">
+               Execution engine
+            </td>
+            <td rowspan="3">
+               <code>ee</code> 
+            </td>
+            <td class="TableCell">
+               <code>EE Generic</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/ee.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>EE Runtime</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/ee_runtime.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               <code>JPDA</code> 
+            </td>
+            <td class="TableCell">
+               <code>include/open/ee_jpda.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td rowspan="2" class="TableCell">
+               OS Portability Layer
+            </td>
+            <td rowspan="2">
+               <code>port</code> 
+            </td>
+            <td class="TableCell">
+               <code>APR</code> 
+            </td>
+            <td class="TableCell">
+               <code>port/src/include/port_atomic.h</code> 
+            </td>
+         </tr>
+         <tr>
+            <td class="TableCell">
+               Other than APR
+            </td>
+            <td class="TableCell">
+               <code>port/src/include/port_invoke_JNI.h</code>,<br>
+                other
+            </td>
+         </tr>
+      </table>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <h2>
+         <a name="Numbering_scheme"></a> 8.3 Appendix C. Numbering Scheme
+      </h2>
+      <p>
+         The OPEN major and minor numbering scheme is used for
+         consistent naming of OPEN interfaces to enable
+         extensibility. According to the scheme, the interface name
+         includes the following numbers:
+      </p>
+      <ul>
+         <li>
+            <i>Major version</i> explicitly defines the VTable
+            structure for the interface; all extended OPEN interfaces
+            with the same major version have the same base VTable
+            structure and support all methods described in the base
+            VTable structure. This number is unique among interface
+            numbers.
+         
+         <li>
+            <i>Minor version</i> identifies the extended interface,
+            which has additional methods at the end of the base
+            version of the VTable structure. This number is unique
+            among other minor numbers for the same interface, so that
+            every extended OPEN interface version is backward
+            compatible with the base OPEN version, which has 0 as the
+            minor number.<br>
+             To provide backward compatibility with other OPEN
+            extended interfaces, get a new major number for a new
+            interface from the open source community so that all OPEN
+            compatible interfaces existing at this moment receive the
+            same major number.
+         
+      </ul>
+      <p>
+         The <code>open.interface.em.generic.1.0</code> is a base
+         version and has the following hierarchy of extended
+         interfaces:
+      </p>
+      <ul>
+         <li>
+            <code>open.interface.em.generic.1.1</code> is backward
+            compatible with
+            <code>open.interface.em.generic.1.0</code>.
+         
+         <li>
+            <code>open.interface.em.generic.1.2</code> is backward
+            compatible with
+            <code>open.interface.em.generic.1.0</code>.
+         
+         <li>
+            <code>open.interface.em.generic.1.2</code> and
+            <code>open.interface.em.generic.1.1</code> are
+            incompatible.
+         
+      </ul>
+      <p>
+         If <code>open.interface.em.generic.1.1</code> contains
+         useful functionality, then this version can become the next
+         base version <code>open.interface.em.generic.2.0</code> by
+         community decision. The implementer of version
+         <code>open.interface.em.generic.1.2</code> can extend 2.0 by
+         adding useful functionality from version 1.1, and create the
+         version <code>2.&lt;new number&gt;</code> version.
+      </p>
+      <p class="note">
+         Note
+      </p>
+      <p class="notetext">
+         The community decides about backward compatibility between
+         different OPEN major versions. For example, the community
+         may consider that OPEN 5 is incompatible with OPEN 4, in
+         other words, the OPEN interfaces with major number 4 can not
+         be plugged onto OPEN 5 interfaces, but OPEN 4 is compatible
+         with OPEN 3, so that OPEN interfaces with major number 3 can
+         be plugged onto the OPEN 4 environment.
+      </p>
+      <p class="backtotop">
+         <a href="#Top">Back to Top</a>
+      </p>
+      <p>
+          
+      </p>
+      <p>
+         (C) Copyright 2005-2006 Intel Corporation
+      </p>
+      <p>
+         <a name="*">*</a> Other brands and names are the property of
+         their respective owners.
+      </p>
+   </body>
+</html>
+

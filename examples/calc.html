@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC -//IETF//DTD HTML 3.2//RU>
+<html>
+
+<head>
+<title>Calculator</title>
+<meta http-equiv="content-type" content="text/html; charset=Windows-1251" />
+<meta name="keywords" content="HTML,JavaScript,C++,Perl,cookbook,example,color,ISO,Latin-1" />
+<meta name="description" content="Alexei Fedotov Homepage.  C++, Java, ASP, JavaScript, Perl programming." />
+<meta name="owner" content="alexei.fedotov.at.gmail.com" />
+<meta name="document-state" content="static" />
+<meta name="language" content="en" />
+<meta name="author" content="Alexei Fedotov" />
+<link rel="stylesheet" href="../include/root.css" type="text/css" />
+<script type="text/javascript" src="../include/root.js"></script>
+<script language="JavaScript">
+var hexstr = "0123456789ABCDEF"
+
+function calc()
+{
+	with (document.info) datafield.value = eval(datafield.value)
+}
+
+function baseto(n, m)
+{
+	with (document.forms.info)
+	{
+		var tmpdec = parseInt(datafield.value, n), tmphex = ""
+		for (; tmpdec>0; tmpdec = Math.floor(tmpdec/m))
+			tmphex = hexstr.charAt(tmpdec % m) + tmphex
+		datafield.value = tmphex
+	}
+}
+
+function cleantags()
+{
+    with (document.forms.htmlsource)
+    {
+        for (var i = 0; i < arguments.length; i++)
+        {
+            var re = new RegExp("<\/?" + arguments[i] + "[^>]*>", "g")
+            datafield.value = datafield.value.replace(re, "")
+        }
+    }
+}
+
+function cleanargs()
+{
+    with (document.forms.htmlsource)
+    {
+        for (var i = 0; i < arguments.length; i++)
+        {
+            var re = new RegExp("(<[^<]*?)\\s*" + arguments[i] + "=\\s*(([\"'])[^\"']*\\3|[^ \\n\\r\\t>]*)((\\s*[^>]*)?>)", "g")
+            datafield.value = datafield.value.replace(re, "$1$4")
+        }
+    }
+}
+
+function cleanspace()
+{
+    with (document.forms.htmlsource)
+    {
+        datafield.value = datafield.value.replace(/(&nbsp;|\s)+/g, " ")
+    }
+}
+
+function cleanempty()
+{
+    with (document.forms.htmlsource)
+    {
+        datafield.value = datafield.value.replace(/<(\w+)[^>]*>\s*<\/\1[^>]*>/g, " ")
+    }
+}
+
+function replacetags(from, to)
+{
+    with (document.forms.htmlsource)
+    {
+        var re = new RegExp("<(\/?)" + from + "(\s+[^>]*)?>", "g")
+        datafield.value = datafield.value.replace(re, "<$1" + to + ">")
+    }
+}
+
+/* Filter all tags except h1, h2, h3, h4,
+ *   p, strong, em, a href name, img src, ul, ol, li,
+ *   table, tr rowspan, th, td colspan
+ */
+function filtertags()
+{
+    with (document.forms.htmlsource)
+    {
+        var re = new RegExp("<\\s*\\/?\\s*(\\w+)(\s+[^>]*)?>", "g")
+        var iter, arr = {}
+        while (res = re.exec(datafield.value))
+        {
+            if (!/^(h[1-4])|p|strong|em|a|img|ul|ol|li|table|tr|th|td|dd|dt|dl$/.test(res[1]))
+                arr[res[1]] = 1
+        }
+        for (iter in arr) {
+            var re = new RegExp("<\/?" + iter + "(\\s+[^>]*)?>", "g")
+            datafield.value = datafield.value.replace(re, "")
+        }
+
+        re = new RegExp("(<[^<]*?)\\s+(\w+)\s*=\\s*(([\"'])[^\"']*\\3|[^ \\n\\r\\t>]*)((\\s*[^>]*)?>)", "g")
+        arr = {}
+        while (res = re.exec(datafield.value))
+        {
+            if (!/^rowspan|callspam|href|name|src/.test(res[2]))
+                arr[res[2]] = 1
+        }
+        for (iter in arr) {
+            alert(iter)
+            cleanargs(iter)
+        }
+    }
+}
+
+</script>
+</head>
+
+<body>
+
+<center>
+<h2>Calculator</h2>
+<form name="info" onsubmit="return false;">
+	<input name="datafield" >
+	<input type="submit" value="DEC->HEX" onclick="baseto(10, 16)" />
+	<input type="submit" value="HEX->DEC" onclick="baseto(16, 10)" />
+	<input type="submit" value="EVAL" onclick="calc()" />
+</form>
+
+<h2>Clean tags &amp; attributes</h2>
+<form name="htmlsource" onsubmit="return false;">
+    <textarea name="datafield" rows="20" cols="80"></textarea><br/>
+    <input type="submit" value="Clean div, span, style, class, width" onclick="cleantags('div', 'span'); cleanargs('style', 'class', 'width')" />
+    <input type="submit" value="Clean MS tags" onclick="cleantags('p:', 'o:', 'v:', 'w:', '!\\['); cleanargs('v:shape')" /><br/>
+    <input type="submit" value="Clean space" onclick="cleanspace()" />
+    <input type="submit" value="Clean empty tags & comments" onclick="cleanempty(); cleantags('!')" /><br/>
+    <input type="submit" value="Replace bold and italic" onclick="replacetags('b', 'strong'); replacetags('i', 'em')" />
+    <input type="submit" value="Filter tags" onclick="filtertags()" />
+</form>
+</center>
+
+</body>
+
+</html>
+
