@@ -1,23 +1,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html><head><title>Alexei Fedotov's CV</title></head>
 <style type="text/css">
-h2
-{
-    font-family: Garamond, serif;
-	border-bottom: 2px solid #000;
-	width: 100%;
-    display: inline-block;
-}
 body
 {
-	font-family: sans-serif;
+    font-family: sans-serif;
     color: black;
     font-size: 9pt;
 }
-a, strong
+h3
 {
-	font-weight: bolder;
-	color: black;
+    border-bottom: 2px solid #000;
+    display: inline-block;
+	padding-left: 15pt;
+	width: 99%;
+}
+h4
+{
+	padding-top: 6pt;
+  	padding-left: 30pt;
+}
+a
+{
+    color: black;
+	text-decoration: none;
+}
+strong
+{
+    font-weight: bolder;
+    color: black;
 }
 p
 {
@@ -26,213 +36,74 @@ p
     margin-left: 30pt;
     margin-bottom: 10pt;
 }
-
-div.topbox
+li
 {
-	margin: 3pt;
-	margin-left: 30pt;
-	display: inline-block;
-	vertical-align: top;
+    margin-left: 30pt;
 }
-
-div.box
+span
 {
-    border: 1px solid black;
-    padding: 3pt;
-	margin: 3pt;
-	font-family: monospace;
-	display: inline-block;
-	vertical-align: top;
+    float: right;
+	padding-right: 30pt;
 }
-
 </style>
 
 <body>
 
-<h2><a href="https://leshikus.github.io/minotaur/resume.html">Alexei Fedotov</a></h2>
+<h3><a href="https://leshikus.github.io/minotaur/resume-block.html">Alexei Fedotov</a></h3>
 
-<p><strong>DevOps Engineer</strong> with Linux and AI background, <a href="mailto:alexei.fedotov@gmail.com">alexei.fedotov@gmail.com</a>, Munich/remote starting on 2&nbsp;Jan, +49 174 4969771, <a href="https://github.com/leshikus">Github</a>, <a href="https://www.linkedin.com/in/dataved">Linkedin</a>.</p>
+<p><a href="mailto:aaf@apache.org">aaf@apache.org</a>, <a href="tel:+49 174 4969771">+49 174 4969771</a>, <a href="https://github.com/leshikus">Github</a>, <a href="https://www.linkedin.com/in/dataved">Linkedin</a></p>
 
-<h2>Current Employment</h2>
+<p>A Linux/DevOps Engineer is looking for a job starting on 2 Jan, Munich/remote.</p>
 
-<p>Infrastructure and DevOps Engineer at <strong>Intel</strong>, responsible for CI and testing pipelines for AI projects: <a href="https://github.com/intel/intel-xpu-backend-for-triton/">Triton</a> fork, <strong>PyTorch</strong>, <a href="https://github.com/intel/mlir-extensions">MLIR</a> extensions, <strong>Modin</strong>, <a href="https://github.com/aregm/icl/">ICL</a>, <a href="https://github.com/intel/graph-compiler">Graph Compiler</a>, <a href="https://github.com/conda-forge/hdk-feedstock">HDK</a> and others. Developed <strong>bash</strong>, <strong>python</strong> scripts, <strong>cmake</strong>-files. Migrated from Teamcity to GitHub actions. Compliled AI projects using <strong>g++</strong>, <strong>nvcc</strong>, <strong>icpx</strong>, <strong>cython</strong>, conda compilers. Evaluated pipeline failures with the focus on <strong>conda</strong>, Falcon Shores and <a href="https://github.com/leshikus/gh-runner">bare-metal runs</a>. <a href="https://github.com/leshikus/shellcheck">Helped</a> developers to overcome Linux and hardware challenges.</p>
+<h3>Experience</h3>
 
-<div class="topbox">Processes<br/>
+<h4>Infrastructure and DevOps Engineer<span>Intel, 2022&ndash;now</span></h4>
 
-<div class="box">
-access governance
-</div>
-
-<div class="box">
-maintenance notifications<br/>
-info sharing
-</div>
-
-<div class="box">
-sla
-</div>
-
-<div class="box">
-release engineering<br/>
-scans, signing
-</div>
-
-<div class="box">
-security compliance<br/>
-retention policy
-</div>
-
-<div class="box">
-backups
-</div></div><br/>
-
-<div class="topbox">Containerized Environments<br/>
-
-<div class="box">
-<a href="https://github.com/leshikus/gh-runner">self-hosted runners</a>
-</div>
-
-<div class="box">
-arc runners
-</div>
-
-<div class="box">
-jupyter profiles
-</div>
-
-<div class="box">
-dev dockers
-</div>
-
-<div class="box">
-perf measurement dockers
-</div>
-
-<div class="box">
-reproducers
-</div></div><br/>
-
-<div class="topbox">Pipelines<br/>
-
-<div class="box">
-product build<br/>
-infra build
-</div>
-
-<div class="box">
-license check<br/>
-style check<br/>
-ASAN<br/>
-llvm-tidy<br/>
-integration tests</div>
+<li>Built CI pipelines and releases for 6 projects. Challenged technical debt in scripts.</li>
+<li>Supported 3-rack infrastructure. Helped developers overcome Linux and hardware challenges.</li>
+<li>Maintained Kubernetes clusters for developers (100+ users, 50 active users).</li>
+<li>Rewarded for hardening.</li>
 
 
-<div class="box">
-regular functional tests<br/>
-cpu testruns<br/>
-gpu testruns<br/>
-functional sim testruns<br/>
-updating issues
-</div>
+<h4>DevOps Engineer<span>Astralinux, 2019&ndash;2022</span></h4>
+
+<li>Quarterly released Orel Linux distribution (40 GB, 5000 packages and installers), the most popular company product.</li>
+<li>Ensured CVEs were patched. Maintained clickhouse, docker, lxc and other (20+) packages.</li>
+<li>Rewrote build system from awk to python, decreasing its size by 60%.</li>
+<li>Wrote a tool for comparing Debian repositories for 6 active users.</li>
+
+<h4>Software Engineer<span>Greenstar, 2016&ndash;2019</span></h4>
+
+<li>Built software (all) for Beaglebone-based digital spectrometers, 20% C, 80% Python.</li>
+<li>Increased pyplot speed by 10x%.</li>
 
 
-<div class="box">
-performance tests<br/>
-updating dashboard
-</div>
-
-<div class="box">
-container tests<br/>
-updating ICL definitions
-</div></div><br/>
+<h4>Senior Software Engineer<span>Intel, 2002&ndash;2006</span></h4>
+<li>Shipped Apache Harmony and Java Device Testing Suite releases.</li>
+<li>Shipped reliability release: skyrocketed JVM reliabilty from 2h to 48h when running Eclipse scenario.</li>
+<li>Increased JVM performance by 4%.</li>
+<li>Wrote OS compatibility layer, Java byte code verifier.</li>
+<li>Wrote high-level design document for 300+ engineering team.</li>
+<li>Filed 8 patent applications.</li>
 
 
+<h4>Other</h4>
 
+<li>Made releases of RedHat-based Linux distribution, a binary compiler, an ARM simulator.</li>
+<li>Pushed through the first non-US project on ASF.</li>
+<li>Led three successful software businesses up to 50 engineers, qa team, infra team.</li>
+<li>Wrote 1000+ page requirement documents. Wrote 200+ page Linux architecture documents.</li>
 
-<div class="topbox"><a href="https://github.com/aregm/icl/">Infrastructure Control Language</a><br/>
+<p></p>
 
-<div class="box">
-Kubernetes<br/>
+<h3>Skills</h3>
 
-<div class="box">
-arc<br/>
-grafana<br/>
-jupyterhub<br/>
-prometheus<br/>
-prefect<br/>
-ray
-</div>
+<p>Bash, Python, C/C++, Kubernetes.</p>
 
-<div class="box">
-kubernetes-dashboard<br/>
-docker-registry<br/>
-cert-manager<br/>
-ingress<br/>
-rook-ceph<br/>
-shared-volume
-</div>
+<h3>Education</h3>
 
-</div>
+<p>Passed DevSecOps, machine learning, finance and management trainings at Intel. Got Master degree with honors in Mathematics, Applied Mathematics from Moscow State University. Given CMMi certification courses on quality management, and number theory. Led 10 student theses and 4 Google Summer of Code projects. Has 8&nbsp;published papers.</p>
 
-<div class="box">Deploy<br/>
-
-<div class="box">
-maas<br/>
-terraform<br/>
-vagrant<br/>
-ansible<br/>
-multipass<br/>
-kubespray</div>
-</div></div>
-
-<div class="topbox">Infrastructure<br/>
-<div class="box">Bare-metal<br/>
-
-<div class="box">
-ubuntu<br/>
-rocky<br/>
-raid<br/>
-datasets<br/>
-runners<br/>
-caches</div>
-</div>
-
-<div class="box">Clouds<br/>
-
-<div class="box">aws<br/>
-gke<br/>
-idc<br/>
-onecloud<br/>
-dbaas</div></div>
-
-<div class="box">VMs<br/>
-<div class="box">kvm<br/>
-qemu<br/>
-docker</div></div>
-
-<div class="box">GitHub<br/>
-<div class="box">
-repos<br/>
-actions<br/>
-runners<br/>
-caches
-</div>
-</div></div>
-
-
-<h2>Previous Experience (<a href="https://www.linkedin.com/in/dataved">25+ years</a>)</h2>
-
-<p><strong>Release Engineering</strong>. Java Device Testing Suite at <strong>Sun Microsystems</strong>, reliability and performance releases at <strong>Intel</strong>. Debian and RedHat-based Linux distributions.</p>
-
-<p><strong>Development</strong>. Functional simulator for ARM-compatible hardware at <strong>Soft Machines</strong>, <a href="https://people.apache.org/~aaf/examples/opendoc/HLD.html">design docs</a>, OS compatibility layer, Java byte code verifier at <strong>Intel</strong>. And <a href="works.html">more</a>.</p>
-
-<p><strong>Management</strong>. SQE teams (10+ engineers), open-source software business (first non-US <a href="https://openmeetings.apache.org/">project</a> in ASF), virtual teams (50+ engineers).</p>
-
-<p><strong>Teaching</strong>. CMMi certification courses on quality management, and number theory, <strong>4</strong> Google Summer of Code projects, <strong>10</strong> student theses, <strong>8</strong>&nbsp;published papers, <strong>8</strong> patent applications.</p>
-    
-<h2>Education</h2>
-
-<p><a href="https://www.linkedin.com/learning/devsecops-automated-security-testing/security-testing-in-ci-cd?u=2101329">DevSecOps</a>, machine learning, finance and management trainings at Intel<br/>
-Master degree with <a href="https://drive.google.com/file/d/1ggL3yGRHEQ-pZVoKmkpFuPjFkDGOi-E0/view">honors</a> in Mathematics, Applied Mathematics from Moscow State University</p>
 
 </body></html>
+
